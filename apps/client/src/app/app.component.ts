@@ -8,7 +8,7 @@ import { IMessage } from '@spikhouse/api-interfaces';
     templateUrl: './app.component.html',
 })
 export class AppComponent {
-    hello$ = this.http.get<IMessage>('/api/hello');
+    public hello$ = this.http.get<IMessage>('/api/hello');
 
-    constructor(private http: HttpClient) {}
+    public constructor(private http: HttpClient) {}
 }
