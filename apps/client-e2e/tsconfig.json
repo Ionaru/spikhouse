@@ -1,0 +1,11 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "lib": ["dom"],
+    "files": [],
+    "include": [],
+    "references": [
+        {
+            "path": "./tsconfig.e2e.json"
+        }
+    ]
+}
