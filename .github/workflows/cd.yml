@@ -1,0 +1,71 @@
+name: Spikhouse CD
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Audit
+        run: npm audit
+
+  test-unit:
+    needs: [audit]
+
+    strategy:
+      matrix:
+        app: [api, client]
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install packages
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint ${{matrix.app}}
+
+      - name: Test
+        run: npm test ${{matrix.app}}
+
+  test-e2e:
+    needs: [audit]
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install packages
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint client-e2e
+
+      - name: Test
+        run: npm run nx serve api & npm run e2e
+
+  # TODO: Docker steps & deployment
