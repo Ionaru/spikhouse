@@ -68,4 +68,18 @@ jobs:
       - name: Test
         run: npm run nx serve api & npm run e2e
 
+      - uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: dist/cypress/apps/client-e2e/screenshots
+          retention-days: 1
+
+      - uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: cypress-videos
+          path: dist/cypress/apps/client-e2e/videos
+          retention-days: 1
+
   # TODO: Docker steps & deployment
