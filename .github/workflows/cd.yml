@@ -65,6 +65,9 @@ jobs:
       - name: Lint
         run: npm run lint client-e2e
 
+      - name: Start database
+        run: docker run -p 27017:27017 --name mongo -d mongo:4
+
       - name: Test
         run: npm run nx serve api & npm run e2e
 
