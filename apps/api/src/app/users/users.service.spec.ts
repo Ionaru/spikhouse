@@ -37,7 +37,7 @@ describe('UsersService', () => {
     describe('getUsers', () => {
         it('should return a list of users', async () => {
             expect.assertions(1);
-            await expect(service.getUsers()).resolves.toEqual([
+            await expect(service.getUsers()).resolves.toStrictEqual([
                 userOne, userTwo,
             ]);
         });
@@ -48,7 +48,7 @@ describe('UsersService', () => {
             expect.assertions(1);
             const email = 'new@example.com';
             const user = await service.createUser(email);
-            expect(user.email).toEqual(email);
+            expect(user.email).toStrictEqual(email);
         });
 
         it('should throw a ConflictException', async () => {
@@ -63,7 +63,7 @@ describe('UsersService', () => {
             });
 
             const email = 'moo@example.com';
-            await expect(service.createUser(email)).rejects.toEqual(new ConflictException(email));
+            await expect(service.createUser(email)).rejects.toStrictEqual(new ConflictException(email));
         });
 
         it('should re-throw unknown mongo exceptions', async () => {
@@ -78,7 +78,7 @@ describe('UsersService', () => {
             });
 
             const email = 'shiny@example.com';
-            await expect(service.createUser(email)).rejects.toEqual(new MongoError('Unknown error!'));
+            await expect(service.createUser(email)).rejects.toStrictEqual(new MongoError('Unknown error!'));
         });
 
         it('should re-throw unknown generic exceptions', async () => {
@@ -92,7 +92,7 @@ describe('UsersService', () => {
             });
 
             const email = 'shiny@example.com';
-            await expect(service.createUser(email)).rejects.toEqual(new Error('Panic!'));
+            await expect(service.createUser(email)).rejects.toStrictEqual(new Error('Panic!'));
         });
     });
 });

@@ -17,6 +17,15 @@
         {
             "files": ["*.js", "*.jsx"],
             "rules": {}
+        },
+        {
+            "files": ["*.spec.ts"],
+            "extends": ["plugin:jest/all"],
+            "rules": {
+                "jest/lowercase-name": "off",
+                "jest/no-hooks": "off",
+                "jest/prefer-spy-on": "off"
+            }
         }
     ]
 }

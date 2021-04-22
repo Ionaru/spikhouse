@@ -33,7 +33,7 @@ describe('UsersController', () => {
         it('should return a list of users', async () => {
             expect.assertions(1);
             const appController = app.get(UsersController);
-            await expect(appController.getUsers()).resolves.toEqual([
+            await expect(appController.getUsers()).resolves.toStrictEqual([
                 userOne, userTwo,
             ]);
         });
@@ -45,7 +45,7 @@ describe('UsersController', () => {
             const appController = app.get(UsersController);
             const email = 'new@example.com';
             const user = await appController.createUser({email});
-            expect(user.email).toEqual(email);
+            expect(user.email).toStrictEqual(email);
         });
     });
 });
