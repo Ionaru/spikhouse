@@ -1,8 +1,8 @@
 import { Module, OnModuleInit } from '@nestjs/common';
-import { InjectModel, MongooseModule, SchemaFactory } from '@nestjs/mongoose';
+import { InjectModel, MongooseModule } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-import { UserSchema } from './user.schema';
+import { User, UserDocument, UserSchema } from './user.schema';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 
@@ -10,9 +10,7 @@ import { UsersService } from './users.service';
     controllers: [UsersController],
     imports: [
         // This allows us to use the UserSchema in this module.
-        MongooseModule.forFeature([
-            {name: UserSchema.name, schema: SchemaFactory.createForClass(UserSchema)},
-        ]),
+        MongooseModule.forFeature([{name: User.name, schema: UserSchema}]),
     ],
     providers: [UsersService],
 })
@@ -20,7 +18,7 @@ export class UsersModule implements OnModuleInit {
     public constructor(
         // This allows operations like querying, creating, updating and deleting.
         // const user = new this.userModel();
-        @InjectModel(UserSchema.name) private userModel: Model<UserSchema>,
+        @InjectModel(User.name) private userModel: Model<UserDocument>,
     ) {}
 
     // onModuleInit is a lifecycle event that runs when the module is initialised (on application startup).

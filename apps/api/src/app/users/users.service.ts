@@ -3,29 +3,28 @@ import { InjectModel } from '@nestjs/mongoose';
 import { MongoError } from 'mongodb';
 import { Model } from 'mongoose';
 
-import { UserSchema } from './user.schema';
+import { User, UserDocument } from './user.schema';
 
 @Injectable()
 export class UsersService {
     public constructor(
-        @InjectModel(UserSchema.name) private userModel: Model<UserSchema>,
+        @InjectModel(User.name) private userModel: Model<UserDocument>,
     ) {}
 
-    public async getUsers(): Promise<UserSchema[]> {
+    public async getUsers(): Promise<User[]> {
         return this.userModel.find();
     }
 
-    public async createUser(email: string): Promise<UserSchema> {
+    public async createUser(email: string): Promise<User> {
         const user = new this.userModel({email});
-
         try {
             await user.save();
         } catch (e) {
             if (e instanceof MongoError && e.code === 11000) {
                 throw new ConflictException(email);
             }
+            throw e;
         }
-
         return user;
     }
 }
