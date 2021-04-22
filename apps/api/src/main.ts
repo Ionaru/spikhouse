@@ -1,15 +1,13 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
+import { format } from 'util';
 
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app/app.module';
 
 const bootstrap = async () => {
     const app = await NestFactory.create(AppModule);
+    app.useGlobalPipes(new ValidationPipe());
     const globalPrefix = 'api';
     app.setGlobalPrefix(globalPrefix);
     const port = process.env.PORT || 3333;
@@ -18,4 +16,7 @@ const bootstrap = async () => {
     });
 };
 
-bootstrap();
+bootstrap().catch((error) => {
+    process.stderr.write(`${format(error)}\n`);
+    process.exit(1);
+});
