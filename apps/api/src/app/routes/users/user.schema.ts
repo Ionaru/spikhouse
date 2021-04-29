@@ -1,11 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IUser } from '@spikhouse/api-interfaces';
 import { Document } from 'mongoose';
 
 export type UserDocument = User & Document;
 
 @Schema({timestamps: true})
-export class User implements IUser {
+export class User {
 
     @Prop({required: true, unique: true})
     public email!: string;

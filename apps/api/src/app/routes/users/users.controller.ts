@@ -1,23 +1,22 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { CreateUserDto } from '@spikhouse/api-interfaces';
+import { CreateUserDto, IUser } from '@spikhouse/api-interfaces';
 
-import { User } from './user.schema';
 import { UsersService } from './users.service';
 
-@Controller()
+@Controller('users')
 export class UsersController {
 
     public constructor(
         private readonly usersService: UsersService,
     ) {}
 
-    @Get('users')
-    public getUsers(): Promise<User[]> {
+    @Get()
+    public getUsers(): Promise<IUser[]> {
         return this.usersService.getUsers();
     }
 
-    @Post('users')
-    public createUser(@Body() data: CreateUserDto): Promise<User> {
+    @Post()
+    public createUser(@Body() data: CreateUserDto): Promise<IUser> {
         return this.usersService.createUser(data.email);
     }
 }

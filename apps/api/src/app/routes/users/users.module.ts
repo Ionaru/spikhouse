@@ -10,7 +10,7 @@ import { UsersService } from './users.service';
     controllers: [UsersController],
     imports: [
         // This allows us to use the UserSchema in this module.
-        MongooseModule.forFeature([{name: User.name, schema: UserSchema}]),
+        MongooseModule.forFeature([{name: User.constructor.name, schema: UserSchema}]),
     ],
     providers: [UsersService],
 })
@@ -18,7 +18,7 @@ export class UsersModule implements OnModuleInit {
     public constructor(
         // This allows operations like querying, creating, updating and deleting.
         // const user = new this.userModel();
-        @InjectModel(User.name) private userModel: Model<UserDocument>,
+        @InjectModel(User.constructor.name) private userModel: Model<UserDocument>,
     ) {}
 
     // onModuleInit is a lifecycle event that runs when the module is initialised (on application startup).
