@@ -8,14 +8,14 @@ import { User, UserDocument } from './user.schema';
 @Injectable()
 export class UsersService {
     public constructor(
-        @InjectModel(User.name) private userModel: Model<UserDocument>,
+        @InjectModel(User.constructor.name) private userModel: Model<UserDocument>,
     ) {}
 
-    public async getUsers(): Promise<User[]> {
+    public async getUsers(): Promise<UserDocument[]> {
         return this.userModel.find();
     }
 
-    public async createUser(email: string): Promise<User> {
+    public async createUser(email: string): Promise<UserDocument> {
         const user = new this.userModel({email});
         try {
             await user.save();

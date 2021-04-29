@@ -22,7 +22,7 @@ describe('UsersService', () => {
     const createTestUsersService = async (mockedUserModelValue: (this: any, doc: any) => void): Promise<UsersService> => {
         const app = await Test.createTestingModule({
             providers: [UsersService, {
-                provide: getModelToken(User.name),
+                provide: getModelToken(User.constructor.name),
                 useValue: mockedUserModelValue,
             }],
         }).compile();

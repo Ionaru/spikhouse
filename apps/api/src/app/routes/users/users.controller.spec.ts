@@ -23,7 +23,7 @@ describe('UsersController', () => {
         app = await Test.createTestingModule({
             controllers: [UsersController],
             providers: [UsersService, {
-                provide: getModelToken(User.name),
+                provide: getModelToken(User.constructor.name),
                 useValue: mockedUserModel,
             }],
         }).compile();
