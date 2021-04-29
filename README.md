@@ -1,8 +1,50 @@
 # Spikhouse
 
-This project was generated using [Nx](https://nx.dev).
+A web-based video conference and meeting app.
 
-<p align="center"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="450"></p>
+## Development
+
+This project uses the [Nx development tools](https://nx.dev) and is based on the [MEAN stack](https://en.wikipedia.org/wiki/MEAN_(solution_stack)).
+
+### How to run
+
+Start a [MongoDB](https://www.mongodb.com/) database in [Docker](https://www.docker.com/):
+```
+docker run -p 27017:27017 --name mongo -d mongo:4
+```
+
+Run [Nest.js](https://nestjs.com/) backend
+```
+npx nx serve api
+```
+
+Run [Angular](https://angular.io/) frontend
+```
+npx nx serve client
+```
+
+Run [ESLint](https://eslint.org/) tests
+```
+npm run lint api
+npm run lint client
+npm run lint client-e2e
+```
+
+Run [Jest](https://jestjs.io/) unit tests
+```
+npx nx test api
+npx nx test client
+```
+
+Run [Cypress](https://www.cypress.io/) end-to-end tests
+```
+npm run e2e
+```
+
+
+# Nx default documentation
+
+This project was generated using [Nx](https://nx.dev).
 
 🔎 **Nx is a set of Extensible Dev Tools for Monorepos.**
 
