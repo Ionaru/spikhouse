@@ -1,1 +1,9 @@
-/* You can add global styles to this file, and also import other style files */
+//$primary: #02AA9F;
+//$secondary: #F9931F;
+
+/* Importing Bootstrap SCSS file, needs to be imported after variables. */
+@import '~bootstrap/scss/bootstrap';
+
+.pointer {
+    cursor: pointer;
+}
