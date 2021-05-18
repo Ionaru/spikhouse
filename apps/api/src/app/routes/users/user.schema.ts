@@ -7,12 +7,21 @@ export type UserDocument = User & Document;
 export class User {
 
     @Prop({required: true, unique: true})
-    public email!: string;
+    public email: string;
+
+    @Prop({required: true, unique: false})
+    public displayName: string;
+
+    @Prop({required: true, unique: false, select: false})
+    public password: string;
+
     public readonly createdAt!: Date | string;
     public readonly updatedAt!: Date | string;
 
-    public constructor(email: string) {
-        this.email = email;
+    public constructor() {
+        throw new Error(
+            'A User should be created using "new this.userModel({email, displayName, password})", not through this constructor.',
+        );
     }
 }
 

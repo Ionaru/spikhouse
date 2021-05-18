@@ -25,6 +25,7 @@
             "files": ["*.ts", "*.tsx"],
             "extends": ["plugin:@nrwl/nx/typescript", "@ionaru"],
             "rules": {
+                "no-underscore-dangle": "off",
                 "no-null/no-null": "off",
                 "import/no-unresolved": [
                     2,

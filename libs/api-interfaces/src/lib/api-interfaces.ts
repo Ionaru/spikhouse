@@ -1,14 +1,23 @@
-import { IsEmail } from 'class-validator';
+import { IsEmail, IsString, MinLength } from 'class-validator';
 
 export interface IUser {
     _id?: string;
     __v?: number;
     email: string;
+    displayName: string;
     createdAt: Date | string;
     updatedAt: Date | string;
 }
 
 export class CreateUserDto {
+    @IsString()
+    @MinLength(3)
+    public displayName!: string;
+
     @IsEmail()
     public email!: string;
+
+    @IsString()
+    @MinLength(8)
+    public password!: string;
 }
