@@ -9,7 +9,6 @@ export const rootMongooseTestModule = (options: MongooseModuleOptions = {}) => M
         mongodb = new MongoMemoryServer();
         const mongoUri = await mongodb.getUri();
         return {
-            debug: true,
             uri: mongoUri,
             useCreateIndex: true,
             ...options,
