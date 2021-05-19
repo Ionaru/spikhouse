@@ -1,51 +1,106 @@
-import { getModelToken } from '@nestjs/mongoose';
-import { Test, TestingModule } from '@nestjs/testing';
+import { INestApplication } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import { Test } from '@nestjs/testing';
+import * as request from 'supertest';
 
-import { User } from './user.schema';
+import { closeInMongodbConnection, rootMongooseTestModule } from '../../../tests/tests.utils';
+
+import { User, UserSchema } from './user.schema';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 
 describe('UsersController', () => {
-    let app: TestingModule;
 
-    const userOne = new User('test@example.com');
-    const userTwo = new User('spam@example.com');
+    let app: INestApplication;
+    let usersController: UsersController;
 
-    beforeAll(async () => {
+    beforeEach(async () => {
 
-        function mockedUserModel(this: any, doc: any) {
-            this.data = doc;
-            this.email = this.data.email;
-            this.save = jest.fn().mockResolvedValue(this.data);
-        }
-        mockedUserModel.find = jest.fn().mockResolvedValue([userOne, userTwo]);
-
-        app = await Test.createTestingModule({
+        const moduleRef = await Test.createTestingModule({
             controllers: [UsersController],
-            providers: [UsersService, {
-                provide: getModelToken(User.constructor.name),
-                useValue: mockedUserModel,
-            }],
+            imports: [
+                rootMongooseTestModule(),
+                MongooseModule.forFeature([
+                    {name: User.constructor.name, schema: UserSchema},
+                ]),
+            ],
+            providers: [UsersService],
         }).compile();
+        app = moduleRef.createNestApplication();
+        usersController = moduleRef.get(UsersController);
+        await app.init();
     });
 
-    describe('getUsers', () => {
-        it('should return a list of users', async () => {
-            expect.assertions(1);
-            const appController = app.get(UsersController);
-            await expect(appController.getUsers()).resolves.toStrictEqual([
-                userOne, userTwo,
-            ]);
+    afterEach(async () => {
+        await closeInMongodbConnection();
+        await app.close();
+    });
+
+    describe('/GET users', () => {
+        it('returns an empty list when DB is empty', async () => {
+            expect.assertions(2);
+            const result = await request(app.getHttpServer()).get('/users');
+            expect(result.statusCode).toStrictEqual(200);
+            expect(result.body).toStrictEqual([]);
+        });
+
+        it('returns a list of users', async () => {
+            expect.assertions(9);
+            const email = 'new@example.com';
+            const displayName = 'newUser';
+            const password = 'ThisIsAPassword';
+            await usersController.createUser({email, displayName, password});
+
+            const result = await request(app.getHttpServer()).get('/users');
+            expect(result.statusCode).toStrictEqual(200);
+            expect(result.body).toHaveLength(1);
+
+            const user = result.body[0];
+            expect(user._id).toBeDefined();
+            expect(user.__v).toBeDefined();
+            expect(user.createdAt).toBeDefined();
+            expect(user.updatedAt).toBeDefined();
+            expect(user.email).toStrictEqual(email);
+            expect(user.displayName).toStrictEqual(displayName);
+            // Password should never be returned (even in hashed form).
+            expect(user.password).toBeUndefined();
         });
     });
 
-    describe('createUser', () => {
-        it('should create and return a user', async () => {
-            expect.assertions(1);
-            const appController = app.get(UsersController);
+    describe('/POST users', () => {
+        it('returns an empty list when DB is empty', async () => {
+            expect.assertions(8);
             const email = 'new@example.com';
-            const user = await appController.createUser({email});
-            expect(user.email).toStrictEqual(email);
+            const displayName = 'newUser';
+            const password = 'ThisIsAPassword';
+            const result = await request(app.getHttpServer()).post('/users').send({email, displayName, password});
+            expect(result.statusCode).toStrictEqual(201);
+            expect(result.body._id).toBeDefined();
+            expect(result.body.__v).toBeDefined();
+            expect(result.body.createdAt).toBeDefined();
+            expect(result.body.updatedAt).toBeDefined();
+            expect(result.body.email).toStrictEqual(email);
+            expect(result.body.displayName).toStrictEqual(displayName);
+            // Password should never be returned (even in hashed form).
+            expect(result.body.password).toBeUndefined();
+        });
+
+        it('returns 409 conflict when user email is taken', async () => {
+            expect.assertions(4);
+            const email = 'new@example.com';
+            const displayName = 'newUser';
+            const password = 'ThisIsAPassword';
+            await usersController.createUser({email, displayName, password});
+            await expect(usersController.getUsers()).resolves.toHaveLength(1);
+            const result = await request(app.getHttpServer()).post('/users').send({email, displayName, password});
+            expect(result.statusCode).toStrictEqual(409);
+            expect(result.body).toStrictEqual({
+                error: 'Conflict',
+                message: email,
+                statusCode: 409,
+            });
+            // User should not have been created.
+            await expect(usersController.getUsers()).resolves.toHaveLength(1);
         });
     });
 });

@@ -20,7 +20,7 @@ jobs:
           node-version: '14'
 
       - name: Audit
-        run: npm audit
+        run: npm audit --production
 
   test-unit:
     needs: [audit]
@@ -33,6 +33,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
+      - run: sudo apt-get install lsb-core
 
       - uses: actions/setup-node@v2
         with:
@@ -67,6 +69,11 @@ jobs:
 
       - name: Start database
         run: docker run -p 27017:27017 --name mongo -d mongo:4
+
+      - name: Wait for DB to be ready
+        uses: jakejarvis/wait-action@master
+        with:
+          time: '30s'
 
       - name: Test
         run: npm run nx serve api & npm run e2e

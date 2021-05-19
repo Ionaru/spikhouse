@@ -1,0 +1,41 @@
+<div class="container">
+
+    <h1>Register new account</h1>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+            <label class="form-label">Display Name</label>
+            <input class="form-control" type="text" [formControlName]="displayNameProperty" autocomplete="username"
+                   required [name]="displayNameProperty">
+            <div class="invalid-feedback" *ngIf="displayName?.errors?.required">
+                Please provide a name.
+            </div>
+            <div class="invalid-feedback" *ngIf="displayName?.errors?.minlength">
+                Name must be 3 characters or more.
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input class="form-control" type="email" [formControlName]="emailProperty" autocomplete="email"
+                   required [name]="emailProperty">
+            <div class="invalid-feedback" *ngIf="email?.errors">
+                Please provide a valid email address.
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input class="form-control" type="password" [formControlName]="passwordProperty" autocomplete="new-password"
+                   required [name]="passwordProperty">
+            <div class="invalid-feedback" *ngIf="password?.errors?.required">
+                Please create a password.
+            </div>
+            <div class="invalid-feedback" *ngIf="password?.errors?.minlength">
+                Password must be 8 characters or more.
+            </div>
+        </div>
+        <button class="btn btn-success" type="submit" [disabled]="!registerForm.valid || submitting">Submit</button>
+        <span class="ms-3 text-danger" *ngIf="error">{{ error }}</span>
+    </form>
+</div>

@@ -7,3 +7,12 @@
 .pointer {
     cursor: pointer;
 }
+
+// Map Angular form-control classes to Bootstrap.
+.ng-valid.ng-dirty, .ng-valid.ng-touched {
+    @extend .is-valid;
+}
+
+.ng-invalid.ng-dirty, .ng-invalid.ng-touched {
+    @extend .is-invalid;
+}

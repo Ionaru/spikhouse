@@ -1,5 +1,6 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { hash } from 'bcrypt';
 import { MongoError } from 'mongodb';
 import { Model } from 'mongoose';
 
@@ -11,20 +12,30 @@ export class UsersService {
         @InjectModel(User.constructor.name) private userModel: Model<UserDocument>,
     ) {}
 
+    public async getUser(id: string): Promise<UserDocument> {
+        const user = await this.userModel.findById(id);
+        if (!user) {
+            throw new NotFoundException(id);
+        }
+        return user;
+    }
+
     public async getUsers(): Promise<UserDocument[]> {
         return this.userModel.find();
     }
 
-    public async createUser(email: string): Promise<UserDocument> {
-        const user = new this.userModel({email});
+    public async createUser(email: string, displayName: string, passwordRaw: string): Promise<UserDocument> {
+        const password = await hash(passwordRaw, 15);
+        const newUser = new this.userModel({email, displayName, password});
         try {
-            await user.save();
+            await newUser.save();
         } catch (e) {
             if (e instanceof MongoError && e.code === 11000) {
                 throw new ConflictException(email);
             }
             throw e;
         }
-        return user;
+
+        return this.getUser(newUser.id);
     }
 }

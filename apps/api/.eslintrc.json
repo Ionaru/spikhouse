@@ -24,7 +24,8 @@
             "rules": {
                 "jest/lowercase-name": "off",
                 "jest/no-hooks": "off",
-                "jest/prefer-spy-on": "off"
+                "jest/prefer-spy-on": "off",
+                "sonarjs/no-duplicate-string": "off"
             }
         }
     ]

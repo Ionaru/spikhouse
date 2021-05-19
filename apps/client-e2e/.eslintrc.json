@@ -16,6 +16,12 @@
                 "@typescript-eslint/no-var-requires": "off",
                 "no-undef": "off"
             }
+        },
+        {
+            "files": ["*.spec.ts"],
+            "rules": {
+                "sonarjs/no-duplicate-string": "off"
+            }
         }
     ]
 }

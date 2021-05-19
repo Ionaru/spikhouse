@@ -14,6 +14,11 @@
 const {preprocessTypescript} = require('@nrwl/cypress/plugins/preprocessor');
 
 module.exports = (on, config) => {
+
+    if (!config.env.tsConfig) {
+        config.env.tsConfig = config.fileServerFolder + '/tsconfig.json';
+    }
+
     // `on` is used to hook into various events Cypress emits
     // `config` is the resolved Cypress config
 
