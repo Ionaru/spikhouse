@@ -17,6 +17,6 @@ export class UsersController {
 
     @Post()
     public createUser(@Body() data: CreateUserDto): Promise<IUser> {
-        return this.usersService.createUser(data.email);
+        return this.usersService.createUser(data.email, data.displayName, data.password);
     }
 }

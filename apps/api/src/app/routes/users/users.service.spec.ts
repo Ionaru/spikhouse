@@ -1,98 +1,85 @@
-import { ConflictException } from '@nestjs/common';
-import { getModelToken } from '@nestjs/mongoose';
-import { Test } from '@nestjs/testing';
-import { MongoError } from 'mongodb';
+import { ConflictException, NotFoundException } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import { Test, TestingModule } from '@nestjs/testing';
+import { Types } from 'mongoose';
 
-import { User } from './user.schema';
+import { closeInMongodbConnection, rootMongooseTestModule } from '../../../tests/tests.utils';
+
+import { User, UserSchema } from './user.schema';
 import { UsersService } from './users.service';
 
 describe('UsersService', () => {
     let service: UsersService;
+    let app: TestingModule;
 
-    const userOne = new User('test@example.com');
-    const userTwo = new User('spam@example.com');
-
-    function mockedUserModel(this: any, doc: any) {
-        this.data = doc;
-        this.email = this.data.email;
-        this.save = jest.fn().mockResolvedValue(new User(this.data.email));
-    }
-    mockedUserModel.find = jest.fn().mockResolvedValue([userOne, userTwo]);
-
-    const createTestUsersService = async (mockedUserModelValue: (this: any, doc: any) => void): Promise<UsersService> => {
-        const app = await Test.createTestingModule({
-            providers: [UsersService, {
-                provide: getModelToken(User.constructor.name),
-                useValue: mockedUserModelValue,
-            }],
+    beforeEach(async () => {
+        app = await Test.createTestingModule({
+            imports: [
+                rootMongooseTestModule(),
+                MongooseModule.forFeature([
+                    {name: User.constructor.name, schema: UserSchema},
+                ]),
+            ],
+            providers: [UsersService],
         }).compile();
 
-        return app.get(UsersService);
-    };
+        service = app.get(UsersService);
+    });
 
-    beforeAll(async () => {
-        service = await createTestUsersService(mockedUserModel);
+    afterEach(async () => {
+        await closeInMongodbConnection();
+        await app.close();
+    });
+
+    describe('getUser', () => {
+        it('throws NotFoundException on unknown id', async () => {
+            expect.assertions(1);
+            const id = Types.ObjectId().toHexString();
+            await expect(service.getUser(id)).rejects.toStrictEqual(new NotFoundException(id));
+        });
+
+        it('returns a user correctly', async () => {
+            expect.assertions(3);
+            const email = 'new@example.com';
+            const displayName = 'newUser';
+            const password = 'ThisIsAPassword';
+            const user = await service.createUser(email, displayName, password);
+            const fetchedUser = await service.getUser(user._id);
+            expect(fetchedUser.email).toStrictEqual(email);
+            expect(fetchedUser.displayName).toStrictEqual(displayName);
+            // Password should never be returned (even in hashed form).
+            expect(fetchedUser.password).toBeUndefined();
+        });
     });
 
     describe('getUsers', () => {
-        it('should return a list of users', async () => {
+        it('returns an empty list when DB is empty', async () => {
             expect.assertions(1);
-            await expect(service.getUsers()).resolves.toStrictEqual([
-                userOne, userTwo,
-            ]);
+            await expect(service.getUsers()).resolves.toStrictEqual([]);
         });
     });
 
     describe('createUser', () => {
         it('should create and return a user', async () => {
-            expect.assertions(1);
+            expect.assertions(3);
             const email = 'new@example.com';
-            const user = await service.createUser(email);
+            const displayName = 'newUser';
+            const password = 'ThisIsAPassword';
+            const user = await service.createUser(email, displayName, password);
             expect(user.email).toStrictEqual(email);
+            expect(user.displayName).toStrictEqual(displayName);
+            // Password should never be returned (even in hashed form).
+            expect(user.password).toBeUndefined();
         });
 
         it('should throw a ConflictException', async () => {
             expect.assertions(1);
-
-            const error = new MongoError('Test error!');
-            error.code = 11000;
-
-            service = await createTestUsersService(function(this: any, doc: any) {
-                this.data = doc;
-                this.save = jest.fn().mockRejectedValueOnce(error);
-            });
-
-            const email = 'moo@example.com';
-            await expect(service.createUser(email)).rejects.toStrictEqual(new ConflictException(email));
+            const email = 'new@example.com';
+            const displayName = 'newUser';
+            const password = 'ThisIsAPassword';
+            await service.createUser(email, displayName, password);
+            await expect(service.createUser(email, displayName, password)).rejects.toStrictEqual(new ConflictException(email));
         });
 
-        it('should re-throw unknown mongo exceptions', async () => {
-            expect.assertions(1);
-
-            const error = new MongoError('Unknown error!');
-            error.code = 11001;
-
-            service = await createTestUsersService(function(this: any, doc: any) {
-                this.data = doc;
-                this.save = jest.fn().mockRejectedValueOnce(error);
-            });
-
-            const email = 'shiny@example.com';
-            await expect(service.createUser(email)).rejects.toStrictEqual(new MongoError('Unknown error!'));
-        });
-
-        it('should re-throw unknown generic exceptions', async () => {
-            expect.assertions(1);
-
-            const error = new Error('Panic!');
-
-            service = await createTestUsersService(function(this: any, doc: any) {
-                this.data = doc;
-                this.save = jest.fn().mockRejectedValueOnce(error);
-            });
-
-            const email = 'shiny@example.com';
-            await expect(service.createUser(email)).rejects.toStrictEqual(new Error('Panic!'));
-        });
     });
 });
