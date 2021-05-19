@@ -48,6 +48,8 @@ jobs:
 
       - name: Test
         run: npm test ${{matrix.app}} --runInBand
+        env:
+          MONGOMS_DEBUG: 1
 
   test-e2e:
     needs: [audit]
