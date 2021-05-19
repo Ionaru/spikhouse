@@ -10,4 +10,5 @@ module.exports = {
     moduleFileExtensions: ['ts', 'js', 'html'],
     coverageDirectory: '../../coverage/apps/api',
     testEnvironment: 'node',
+    testTimeout: 30000,
 };

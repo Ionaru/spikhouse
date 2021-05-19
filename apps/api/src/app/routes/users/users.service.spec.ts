@@ -3,7 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Types } from 'mongoose';
 
-import { closeInMongodbConnection, rootMongooseTestModule } from '../../../tests/tests.utils';
+import { rootMongooseTestModule } from '../../../tests/tests.utils';
 
 import { User, UserSchema } from './user.schema';
 import { UsersService } from './users.service';
@@ -27,7 +27,6 @@ describe('UsersService', () => {
     });
 
     afterEach(async () => {
-        await closeInMongodbConnection();
         await app.close();
     });
 
