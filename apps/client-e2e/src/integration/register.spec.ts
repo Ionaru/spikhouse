@@ -64,7 +64,7 @@ describe('registration', () => {
         cy.get('input[name="password"]').type('CypressPassword');
         cy.get('button[type="submit"]').click();
         cy.get('button[type="submit"]').should('be.disabled');
-        cy.get('@consoleLog').should('be.calledWith', 'Created user!');
+        cy.get('@consoleLog', {timeout: 30000}).should('be.calledWith', 'Created user!');
     });
 
     it('can not register a duplicate account', () => {
@@ -73,6 +73,6 @@ describe('registration', () => {
         cy.get('input[name="password"]').type('CypressPassword');
         cy.get('button[type="submit"]').click();
         cy.get('button[type="submit"]').should('be.disabled');
-        cy.contains('Email is already in use.');
+        cy.contains('Email is already in use.', {timeout: 30000});
     });
 });
