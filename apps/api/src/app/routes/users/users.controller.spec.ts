@@ -3,7 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
 
-import { closeInMongodbConnection, rootMongooseTestModule } from '../../../tests/tests.utils';
+import { rootMongooseTestModule } from '../../../tests/tests.utils';
 
 import { User, UserSchema } from './user.schema';
 import { UsersController } from './users.controller';
@@ -32,7 +32,6 @@ describe('UsersController', () => {
     });
 
     afterEach(async () => {
-        await closeInMongodbConnection();
         await app.close();
     });
 

@@ -27,7 +27,6 @@ describe('UsersService', () => {
     });
 
     afterEach(async () => {
-        // await closeInMongodbConnection();
         await app.close();
     });
 
