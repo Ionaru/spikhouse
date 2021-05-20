@@ -1,11 +1,33 @@
-<div class="container text-center">
-    <h1>Welcome to Spikhouse!</h1>
-    <button class="btn btn-primary">Button</button>
-    <button class="btn btn-secondary">Button</button>
-    <button class="btn btn-success">Button</button>
-    <button class="btn btn-info">Button</button>
-    <button class="btn btn-warning">Button</button>
-    <button class="btn btn-danger">Button</button>
-    <button class="btn btn-light">Button</button>
-    <button class="btn btn-dark">Button</button>
+<div class="container mt-3">
+    <h1 class="text-center">Welcome to Spikhouse!</h1>
+    <p class="text-center">Please log in or <a routerLink="/register">create an account</a>.</p>
+
+    <hr>
+
+    <div class="row justify-content-center">
+        <form [formGroup]="loginForm" (ngSubmit)="login()" class="col-lg-6">
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input class="form-control" type="email" [formControlName]="emailProperty" autocomplete="email"
+                       required [name]="emailProperty">
+                <div class="invalid-feedback" *ngIf="email?.errors">
+                    Please provide a valid email address.
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input class="form-control" type="password" [formControlName]="passwordProperty" autocomplete="password"
+                       required [name]="passwordProperty">
+                <div class="invalid-feedback" *ngIf="password?.errors?.required">
+                    Please enter a password.
+                </div>
+            </div>
+            <button class="btn btn-success" type="submit" [disabled]="!loginForm.valid || submitting">Log in</button>
+            <span class="ms-3">
+                <fa-icon *ngIf="submitting" [icon]="loadingIcon" [spin]="true" [fixedWidth]="true"></fa-icon>
+                <span class="text-danger" *ngIf="loginError">{{ loginError }}</span>
+            </span>
+        </form>
+    </div>
 </div>

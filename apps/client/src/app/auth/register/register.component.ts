@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
+import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
 import { StatusCodes } from 'http-status-codes';
 import { Observable, throwError } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
@@ -13,6 +14,8 @@ import { UserService } from '../user.service';
     templateUrl: './register.component.html',
 })
 export class RegisterComponent {
+
+    public readonly loadingIcon = faCircleNotch;
 
     public readonly displayNameProperty = 'displayName';
     public readonly emailProperty = 'email';
@@ -41,6 +44,7 @@ export class RegisterComponent {
 
     public submitting = false;
     public error = '';
+    public created = false;
 
     public constructor(
         private readonly userService: UserService,
@@ -48,14 +52,14 @@ export class RegisterComponent {
 
     public onSubmit(): void {
         this.submitting = true;
+        this.error = '';
         this.userService.createUser(this.email?.value, this.displayName?.value, this.password?.value)
             .pipe(
                 catchError((error: HttpErrorResponse) => this.handleError(error)),
                 finalize(() => this.submitting = false),
             )
-            .subscribe((user) => {
-                // eslint-disable-next-line no-console
-                console.log('Created user!', user);
+            .subscribe(() => {
+                this.created = true;
             });
     }
 
@@ -64,6 +68,6 @@ export class RegisterComponent {
             this.error = 'Email is already in use.';
         }
 
-        return throwError('Error while creating user.');
+        return throwError(this.error || error);
     }
 }

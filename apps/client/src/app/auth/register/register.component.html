@@ -1,41 +1,54 @@
-<div class="container">
+<div class="container mt-3">
 
-    <h1>Register new account</h1>
+    <h1 class="text-center">Register new Spikhouse account</h1>
+    <p class="text-center">Already have an account? <a routerLink="/">Log in</a> instead.</p>
 
-    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-        <div class="mb-3">
-            <label class="form-label">Display Name</label>
-            <input class="form-control" type="text" [formControlName]="displayNameProperty" autocomplete="username"
-                   required [name]="displayNameProperty">
-            <div class="invalid-feedback" *ngIf="displayName?.errors?.required">
-                Please provide a name.
-            </div>
-            <div class="invalid-feedback" *ngIf="displayName?.errors?.minlength">
-                Name must be 3 characters or more.
-            </div>
-        </div>
+    <hr>
 
-        <div class="mb-3">
-            <label class="form-label">Email</label>
-            <input class="form-control" type="email" [formControlName]="emailProperty" autocomplete="email"
-                   required [name]="emailProperty">
-            <div class="invalid-feedback" *ngIf="email?.errors">
-                Please provide a valid email address.
-            </div>
-        </div>
+    <div class="row justify-content-center">
 
-        <div class="mb-3">
-            <label class="form-label">Password</label>
-            <input class="form-control" type="password" [formControlName]="passwordProperty" autocomplete="new-password"
-                   required [name]="passwordProperty">
-            <div class="invalid-feedback" *ngIf="password?.errors?.required">
-                Please create a password.
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="col-lg-6">
+            <div class="mb-3">
+                <label class="form-label">Display Name</label>
+                <input class="form-control" type="text" [formControlName]="displayNameProperty" autocomplete="username"
+                       required [name]="displayNameProperty">
+                <div class="invalid-feedback" *ngIf="displayName?.errors?.required">
+                    Please provide a name.
+                </div>
+                <div class="invalid-feedback" *ngIf="displayName?.errors?.minlength">
+                    Name must be 3 characters or more.
+                </div>
             </div>
-            <div class="invalid-feedback" *ngIf="password?.errors?.minlength">
-                Password must be 8 characters or more.
+
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input class="form-control" type="email" [formControlName]="emailProperty" autocomplete="email"
+                       required [name]="emailProperty">
+                <div class="invalid-feedback" *ngIf="email?.errors">
+                    Please provide a valid email address.
+                </div>
             </div>
-        </div>
-        <button class="btn btn-success" type="submit" [disabled]="!registerForm.valid || submitting">Submit</button>
-        <span class="ms-3 text-danger" *ngIf="error">{{ error }}</span>
-    </form>
+
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input class="form-control" type="password" [formControlName]="passwordProperty" autocomplete="new-password"
+                       required [name]="passwordProperty">
+                <div class="invalid-feedback" *ngIf="password?.errors?.required">
+                    Please create a password.
+                </div>
+                <div class="invalid-feedback" *ngIf="password?.errors?.minlength">
+                    Password must be 8 characters or more.
+                </div>
+            </div>
+            <button class="btn btn-success" type="submit" [disabled]="!registerForm.valid || submitting">Submit</button>
+            <span class="ms-3">
+                <fa-icon *ngIf="submitting" [icon]="loadingIcon" [spin]="true" [fixedWidth]="true"></fa-icon>
+                <span *ngIf="error" class="text-danger" >{{ error }}</span>
+                <span *ngIf="created" class="text-success">
+                    Account created, you can now <a routerLink="/">log in</a>.
+                </span>
+            </span>
+        </form>
+
+    </div>
 </div>

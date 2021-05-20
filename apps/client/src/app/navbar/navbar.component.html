@@ -1,4 +1,4 @@
-<nav class="navbar navbar-light bg-light navbar-expand">
+<nav class="navbar navbar-light bg-light navbar-expand" *ngIf="getUser()">
     <div class="container">
         <a class="navbar-brand" routerLink="/">
             <fa-icon [icon]="appLogo" [fixedWidth]="true"></fa-icon>
@@ -34,9 +34,15 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" routerLinkActive="active" routerLink="/user">
+                <a class="nav-link pointer">
                     <fa-icon [icon]="userIcon" [fixedWidth]="true"></fa-icon>
-                    DisplayName
+                    {{ getUser().displayName }}
+                </a>
+            </li>
+            <li class="nav-item" (click)="logout()">
+                <a class="nav-link pointer">
+                    Logout
+                    <fa-icon [icon]="logoutIcon" [fixedWidth]="true"></fa-icon>
                 </a>
             </li>
         </ul>

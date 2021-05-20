@@ -12,16 +12,39 @@
 declare namespace Cypress {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/naming-convention
     interface Chainable<Subject> {
-        login(email: string, password: string): void;
+        login(email: string, password: string, submit?: boolean): void;
+        register(displayName: string, email: string, password: string, submit?: boolean): void;
     }
 }
-//
+
+const enterCredential = (field: string, input: string): void => {
+    if (input) {
+        cy.get(field).type(input, {});
+    } else {
+        cy.get(field).focus();
+    }
+    cy.get(field).blur();
+};
+
 // -- This is a parent command --
-Cypress.Commands.add('login', (email, password) => {
-    // eslint-disable-next-line no-console
-    console.log('Custom command example: Login', email, password);
+Cypress.Commands.add('login', (email, password, submit = true) => {
+    enterCredential('input[name="email"]', email);
+    enterCredential('input[name="password"]', password);
+
+    if (submit) {
+        cy.get('button[type="submit"]').click();
+    }
 });
-//
+
+Cypress.Commands.add('register', (displayName, email, password, submit = true) => {
+    enterCredential('input[name="displayName"]', displayName);
+    enterCredential('input[name="email"]', email);
+    enterCredential('input[name="password"]', password);
+    if (submit) {
+        cy.get('button[type="submit"]').click();
+    }
+});
+
 // -- This is a child command --
 // Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
 //
