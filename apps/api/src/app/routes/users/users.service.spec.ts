@@ -1,4 +1,4 @@
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import { ConflictException } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Types } from 'mongoose';
@@ -34,7 +34,7 @@ describe('UsersService', () => {
         it('throws NotFoundException on unknown id', async () => {
             expect.assertions(1);
             const id = Types.ObjectId().toHexString();
-            await expect(service.getUser(id)).rejects.toStrictEqual(new NotFoundException(id));
+            await expect(service.getUser(id)).resolves.toBeNull();
         });
 
         it('returns a user correctly', async () => {
@@ -44,6 +44,9 @@ describe('UsersService', () => {
             const password = 'ThisIsAPassword';
             const user = await service.createUser(email, displayName, password);
             const fetchedUser = await service.getUser(user._id);
+            if (!fetchedUser) {
+                throw new Error('fetchedUser does not exist!');
+            }
             expect(fetchedUser.email).toStrictEqual(email);
             expect(fetchedUser.displayName).toStrictEqual(displayName);
             // Password should never be returned (even in hashed form).

@@ -1,6 +1,6 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { hash } from 'bcrypt';
+import { compare, hash } from 'bcrypt';
 import { MongoError } from 'mongodb';
 import { Model } from 'mongoose';
 
@@ -12,12 +12,28 @@ export class UsersService {
         @InjectModel(User.constructor.name) private userModel: Model<UserDocument>,
     ) {}
 
-    public async getUser(id: string): Promise<UserDocument> {
-        const user = await this.userModel.findById(id);
+    public async getUser(id: string): Promise<UserDocument | null> {
+        return this.userModel.findById(id);
+    }
+
+    public async getUserByEmail(email: string): Promise<UserDocument | null> {
+        return this.userModel.findOne({email});
+    }
+
+    public async checkUserPassword(id: string, password: string): Promise<boolean> {
+        const user = await this.userModel.findById(id).select('password');
         if (!user) {
-            throw new NotFoundException(id);
+            return false;
         }
-        return user;
+
+        return compare(password, user.password);
+    }
+
+    public async deleteUser(email: string): Promise<void> {
+        const user = await this.userModel.findOne({email});
+        if (user) {
+            await user.remove();
+        }
     }
 
     public async getUsers(): Promise<UserDocument[]> {
@@ -36,6 +52,10 @@ export class UsersService {
             throw e;
         }
 
-        return this.getUser(newUser.id);
+        const user = await this.getUser(newUser.id);
+        if (!user) {
+            throw new NotFoundException(newUser.id);
+        }
+        return user;
     }
 }

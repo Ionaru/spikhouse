@@ -2,12 +2,14 @@ import { Module, OnModuleInit } from '@nestjs/common';
 import { InjectModel, MongooseModule } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
+import { AuthController } from '../auth/auth.controller';
+
 import { User, UserDocument, UserSchema } from './user.schema';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 
 @Module({
-    controllers: [UsersController],
+    controllers: [UsersController, AuthController],
     imports: [
         // This allows us to use the UserSchema in this module.
         MongooseModule.forFeature([{name: User.constructor.name, schema: UserSchema}]),
