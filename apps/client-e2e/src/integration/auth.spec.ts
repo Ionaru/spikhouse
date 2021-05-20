@@ -68,11 +68,11 @@ describe('registration', () => {
 
     it('can remember the user session', () => {
         cy.login('auth@example.com', 'Password!!');
-        cy.url({timeout: 30000}).should('include', '/inside');
+        cy.location('pathname', {timeout: 30000}).should('equal', '/inside');
         cy.visit('/');
-        cy.url().should('equal', Cypress.config().baseUrl + '/inside');
+        cy.location('pathname').should('equal', '/inside');
         cy.visit('/inside');
-        cy.url().should('equal', Cypress.config().baseUrl + '/inside');
+        cy.location('pathname').should('equal', '/inside');
     });
 
     it('can log out after logging in', () => {
@@ -85,7 +85,7 @@ describe('registration', () => {
         cy.login('auth@example.com', 'Password!!');
         cy.contains('Logout', {timeout: 30000}).click();
         cy.visit('/inside');
-        cy.url().should('equal', Cypress.config().baseUrl + '/');
+        cy.location('pathname').should('equal', '/');
     });
 
 });
