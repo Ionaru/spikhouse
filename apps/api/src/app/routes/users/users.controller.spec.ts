@@ -21,7 +21,7 @@ describe('UsersController', () => {
             imports: [
                 rootMongooseTestModule(),
                 MongooseModule.forFeature([
-                    {name: User.constructor.name, schema: UserSchema},
+                    {name: User.name, schema: UserSchema},
                 ]),
             ],
             providers: [UsersService],

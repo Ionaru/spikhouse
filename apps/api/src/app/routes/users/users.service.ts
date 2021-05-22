@@ -9,7 +9,7 @@ import { User, UserDocument } from './user.schema';
 @Injectable()
 export class UsersService {
     public constructor(
-        @InjectModel(User.constructor.name) private userModel: Model<UserDocument>,
+        @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
     ) {}
 
     public async getUser(id: string): Promise<UserDocument | null> {

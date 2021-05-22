@@ -3,7 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import MongoStore from 'connect-mongo';
 import { SessionModule } from 'nestjs-session';
 
-import { UsersModule } from './routes/users/users.module';
+import { UsersModule } from './routes/users.module';
 
 const mongoUrl = 'mongodb://localhost/spikhouse';
 

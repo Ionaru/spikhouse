@@ -1,5 +1,5 @@
 // eslint-disable-next-line max-classes-per-file
-import { IsEmail, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
 
 export interface IUser {
     _id?: string;
@@ -29,4 +29,15 @@ export class LoginDto {
 
     @IsString()
     public password!: string;
+}
+
+export class CreateRoomDto {
+    @IsString()
+    @MinLength(3)
+    public name!: string;
+
+    @IsString()
+    @MinLength(3)
+    @IsOptional()
+    public password?: string;
 }

@@ -10,7 +10,6 @@ import { UsersService } from '../users/users.service';
 
 import { AuthController } from './auth.controller';
 
-
 describe('AuthController', () => {
 
     let app: INestApplication;
@@ -24,7 +23,7 @@ describe('AuthController', () => {
             imports: [
                 rootMongooseTestModule(),
                 MongooseModule.forFeature([
-                    {name: User.constructor.name, schema: UserSchema},
+                    {name: User.name, schema: UserSchema},
                 ]),
                 SessionModule.forRoot({session: {secret: 'test', resave: false, saveUninitialized: false}}),
             ],
