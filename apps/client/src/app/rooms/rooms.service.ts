@@ -11,8 +11,8 @@ export class RoomsService {
         private readonly http: HttpClient,
     ) {}
 
-    public createRoom(name: string, password?: string): Observable<IRoom> {
-        return this.http.post<IRoom>('/api/rooms', {name, password, owner: UserService.user});
+    public createRoom(roomName: string, password?: string): Observable<IRoom> {
+        return this.http.post<IRoom>('/api/rooms', {name: roomName, password, owner: UserService.user});
     }
 
     public getRooms(): Observable<IRoom[]> {
