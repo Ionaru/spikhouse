@@ -1,11 +1,11 @@
 import { INestApplication } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
+import { User, UserSchema } from '@spikhouse/api-interfaces';
 import * as request from 'supertest';
 
 import { rootMongooseTestModule } from '../../../tests/tests.utils';
 
-import { User, UserSchema } from './user.schema';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 

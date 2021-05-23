@@ -1,9 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { Room, RoomDocument } from '@spikhouse/api-interfaces';
 import { hash } from 'bcrypt';
 import { Model } from 'mongoose';
-
-import { Room, RoomDocument } from './room.schema';
 
 @Injectable()
 export class RoomsService {
@@ -12,7 +11,7 @@ export class RoomsService {
     ) {}
 
     public async getRooms(): Promise<RoomDocument[]> {
-        return this.roomModel.find().populate('owner', 'displayName');
+        return this.roomModel.find();
     }
 
     public async getRoom(id: string): Promise<RoomDocument | null> {

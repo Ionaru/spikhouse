@@ -1,5 +1,8 @@
 // eslint-disable-next-line max-classes-per-file
 import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
+import * as mongoose from 'mongoose';
+
+import { User } from './user.schema';
 
 export interface IUser {
     _id?: string;
@@ -40,4 +43,14 @@ export class CreateRoomDto {
     @MinLength(3)
     @IsOptional()
     public password?: string;
+}
+
+export interface IRoom {
+    _id?: string;
+    __v?: number;
+    name: string;
+    createdAt: Date | string;
+    updatedAt: Date | string;
+    owner: User | mongoose.Schema.Types.ObjectId;
+    hasPassword: boolean;
 }

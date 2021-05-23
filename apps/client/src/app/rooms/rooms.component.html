@@ -1,0 +1,27 @@
+<div class="container mt-3">
+
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="card m-1">
+                <div class="card-body">
+                    <h5 class="card-title">Create a new room</h5>
+                    <a (click)="createRoom()" class="btn btn-success">Create</a>
+                    <a (click)="createRoomWithPassword()" class="btn btn-warning ms-1">Create with password</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3" *ngFor="let room of rooms">
+            <div class="card m-1">
+                <div class="card-body">
+                    <h5 class="card-title">{{room.name}}</h5>
+                    <a routerLink="/rooms/{{room._id}}" class="btn btn-primary disabled">
+                        <fa-icon *ngIf="room.hasPassword" [icon]="passwordIcon"></fa-icon>
+                        Join
+                    </a>
+                    <button (click)="deleteRoom(room._id)" class="btn btn-danger ms-1">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

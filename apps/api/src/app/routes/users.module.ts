@@ -1,12 +1,11 @@
 import { Module, OnModuleInit } from '@nestjs/common';
 import { InjectModel, MongooseModule } from '@nestjs/mongoose';
+import { Room, RoomDocument, RoomSchema, User, UserDocument, UserSchema } from '@spikhouse/api-interfaces';
 import { Model } from 'mongoose';
 
 import { AuthController } from './auth/auth.controller';
-import { Room, RoomDocument, RoomSchema } from './rooms/room.schema';
 import { RoomsController } from './rooms/rooms.controller';
 import { RoomsService } from './rooms/rooms.service';
-import { User, UserDocument, UserSchema } from './users/user.schema';
 import { UsersController } from './users/users.controller';
 import { UsersService } from './users/users.service';
 

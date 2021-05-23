@@ -45,7 +45,7 @@ export class HomeComponent implements OnInit {
 
     public ngOnInit(): void {
         if (UserService.user) {
-            this.router.navigate(['/inside']).then();
+            this.router.navigate(['/rooms']).then();
         }
     }
 
@@ -57,7 +57,7 @@ export class HomeComponent implements OnInit {
             finalize(() => this.submitting = false),
         ).subscribe((response) => {
             this.userService.storeUser(response);
-            this.router.navigate(['/inside']).then();
+            this.router.navigate(['/rooms']).then();
         });
     }
 
