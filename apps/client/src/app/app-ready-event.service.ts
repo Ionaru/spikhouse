@@ -31,6 +31,8 @@ export class AppReadyEventService {
         }
 
         AppReadyEventService._appReady = true;
+        document.write(detail.message);
+        document.close();
         throw detail;
     }
 }

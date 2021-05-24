@@ -63,16 +63,16 @@ describe('registration', () => {
         cy.get('a').contains('Log in').click();
         cy.login('auth@example.com', 'Password!!');
         cy.contains('AuthTest', {timeout: 30000});
-        cy.contains('inside works!', {timeout: 30000});
+        cy.contains('Create a new room', {timeout: 30000});
     });
 
     it('can remember the user session', () => {
         cy.login('auth@example.com', 'Password!!');
-        cy.location('pathname', {timeout: 30000}).should('equal', '/inside');
+        cy.location('pathname', {timeout: 30000}).should('equal', '/rooms');
         cy.visit('/');
-        cy.location('pathname').should('equal', '/inside');
-        cy.visit('/inside');
-        cy.location('pathname').should('equal', '/inside');
+        cy.location('pathname').should('equal', '/rooms');
+        cy.visit('/rooms');
+        cy.location('pathname').should('equal', '/rooms');
     });
 
     it('can log out after logging in', () => {
@@ -81,10 +81,10 @@ describe('registration', () => {
         cy.contains('Welcome to Spikhouse!');
     });
 
-    it('can no longer access inside after logging out', () => {
+    it('can no longer access rooms after logging out', () => {
         cy.login('auth@example.com', 'Password!!');
         cy.contains('Logout', {timeout: 30000}).click();
-        cy.visit('/inside');
+        cy.visit('/rooms');
         cy.location('pathname').should('equal', '/');
     });
 
