@@ -47,7 +47,7 @@ jobs:
         run: npm run lint ${{matrix.app}}
 
       - name: Test
-        run: npm test ${{matrix.app}} --runInBand
+        run: npm test ${{matrix.app}}
 
   test-e2e:
     needs: [audit]
