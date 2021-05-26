@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Room, RoomSchema, User, UserDocument, UserSchema } from '@spikhouse/api-interfaces';
 import { Types } from 'mongoose';
 
-import { rootMongooseTestModule } from '../../../tests/tests.utils';
+import { closeInMongodbConnections, rootMongooseTestModule } from '../../../tests/tests.utils';
 import { UsersService } from '../users/users.service';
 
 import { RoomsService } from './rooms.service';
@@ -33,6 +33,10 @@ describe('RoomsService', () => {
 
     afterEach(async () => {
         await app.close();
+    });
+
+    afterAll(async () => {
+        await closeInMongodbConnections();
     });
 
     describe('getRoom', () => {
