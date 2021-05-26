@@ -1,15 +1,14 @@
 import { INestApplication } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
+import { User, UserSchema } from '@spikhouse/api-interfaces';
 import { SessionModule } from 'nestjs-session';
 import * as request from 'supertest';
 
 import { rootMongooseTestModule } from '../../../tests/tests.utils';
-import { User, UserSchema } from '../users/user.schema';
 import { UsersService } from '../users/users.service';
 
 import { AuthController } from './auth.controller';
-
 
 describe('AuthController', () => {
 
@@ -24,7 +23,7 @@ describe('AuthController', () => {
             imports: [
                 rootMongooseTestModule(),
                 MongooseModule.forFeature([
-                    {name: User.constructor.name, schema: UserSchema},
+                    {name: User.name, schema: UserSchema},
                 ]),
                 SessionModule.forRoot({session: {secret: 'test', resave: false, saveUninitialized: false}}),
             ],

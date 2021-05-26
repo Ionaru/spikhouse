@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { IUser } from '@spikhouse/api-interfaces';
+import { CreateUserDto, IUser, LoginDto } from '@spikhouse/api-interfaces';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
@@ -10,14 +10,18 @@ export class UserService {
     private static _user?: IUser;
     public static get user(): IUser | undefined { return this._user; }
 
-    public constructor(private http: HttpClient) {}
+    public constructor(
+        private readonly http: HttpClient,
+    ) {}
 
     public createUser(email: string, displayName: string, password: string): Observable<IUser> {
-        return this.http.post<IUser>('/api/users', {email, displayName, password});
+        const data: CreateUserDto = {email, displayName, password};
+        return this.http.post<IUser>('/api/users', data);
     }
 
     public login(email: string, password: string): Observable<IUser> {
-        return this.http.post<IUser>('/api/auth', {email, password});
+        const data: LoginDto = {email, password};
+        return this.http.post<IUser>('/api/auth', data);
     }
 
     public logout(): void {

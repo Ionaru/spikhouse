@@ -7,15 +7,16 @@ import { AppReadyEventService } from './app-ready-event.service';
 import { AppComponent } from './app.component';
 import { UserService } from './auth/user.service';
 import { HomeComponent } from './home/home.component';
-import { InsideComponent } from './inside/inside.component';
 import { NavbarComponent } from './navbar/navbar.component';
+import { RoomsComponent } from './rooms/rooms.component';
+import { RoomsService } from './rooms/rooms.service';
 
 describe('AppComponent', () => {
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
-            declarations: [AppComponent, HomeComponent, NavbarComponent, InsideComponent],
+            declarations: [AppComponent, HomeComponent, NavbarComponent, RoomsComponent],
             imports: [HttpClientTestingModule, RouterTestingModule, FontAwesomeTestingModule],
-            providers: [AppReadyEventService, UserService],
+            providers: [AppReadyEventService, UserService, RoomsService],
         }).compileComponents();
     }));
 

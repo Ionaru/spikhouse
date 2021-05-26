@@ -13,13 +13,14 @@ import { UserService } from './auth/user.service';
 import { AppReadyGuard } from './guards/app-ready.guard';
 import { AuthGuard } from './guards/auth.guard';
 import { HomeComponent } from './home/home.component';
-import { InsideComponent } from './inside/inside.component';
 import { NavbarComponent } from './navbar/navbar.component';
+import { RoomsComponent } from './rooms/rooms.component';
+import { RoomsService } from './rooms/rooms.service';
 
 @NgModule({
     bootstrap: [AppComponent],
-    declarations: [AppComponent, HomeComponent, NavbarComponent, RegisterComponent, InsideComponent],
+    declarations: [AppComponent, HomeComponent, NavbarComponent, RegisterComponent, RoomsComponent],
     imports: [BrowserModule, HttpClientModule, NgbModule, AppRoutingModule, FontAwesomeModule, ReactiveFormsModule],
-    providers: [UserService, AuthGuard, AppReadyGuard, AppReadyEventService],
+    providers: [UserService, RoomsService, AuthGuard, AppReadyGuard, AppReadyEventService],
 })
 export class AppModule {}

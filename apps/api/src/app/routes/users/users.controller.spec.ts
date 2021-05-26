@@ -1,11 +1,11 @@
 import { INestApplication } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
+import { User, UserSchema } from '@spikhouse/api-interfaces';
 import * as request from 'supertest';
 
 import { closeInMongodbConnections, rootMongooseTestModule } from '../../../tests/tests.utils';
 
-import { User, UserSchema } from './user.schema';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 
@@ -21,7 +21,7 @@ describe('UsersController', () => {
             imports: [
                 rootMongooseTestModule(),
                 MongooseModule.forFeature([
-                    {name: User.constructor.name, schema: UserSchema},
+                    {name: User.name, schema: UserSchema},
                 ]),
             ],
             providers: [UsersService],

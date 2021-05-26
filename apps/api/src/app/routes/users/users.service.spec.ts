@@ -1,11 +1,11 @@
 import { ConflictException } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
+import { User, UserSchema } from '@spikhouse/api-interfaces';
 import { Types } from 'mongoose';
 
 import { closeInMongodbConnections, rootMongooseTestModule } from '../../../tests/tests.utils';
 
-import { User, UserSchema } from './user.schema';
 import { UsersService } from './users.service';
 
 describe('UsersService', () => {
@@ -17,7 +17,7 @@ describe('UsersService', () => {
             imports: [
                 rootMongooseTestModule(),
                 MongooseModule.forFeature([
-                    {name: User.constructor.name, schema: UserSchema},
+                    {name: User.name, schema: UserSchema},
                 ]),
             ],
             providers: [UsersService],

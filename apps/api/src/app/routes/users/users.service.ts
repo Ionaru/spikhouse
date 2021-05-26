@@ -1,15 +1,14 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { User, UserDocument } from '@spikhouse/api-interfaces';
 import { compare, hash } from 'bcrypt';
 import { MongoError } from 'mongodb';
 import { Model } from 'mongoose';
 
-import { User, UserDocument } from './user.schema';
-
 @Injectable()
 export class UsersService {
     public constructor(
-        @InjectModel(User.constructor.name) private userModel: Model<UserDocument>,
+        @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
     ) {}
 
     public async getUser(id: string): Promise<UserDocument | null> {
