@@ -47,7 +47,7 @@ jobs:
         run: npm run lint ${{matrix.app}}
 
       - name: Test
-        run: npm test ${{matrix.app}} --runInBand
+        run: npm test ${{matrix.app}}
 
   test-e2e:
     needs: [audit]
@@ -73,7 +73,7 @@ jobs:
       - name: Wait for DB to be ready
         uses: jakejarvis/wait-action@master
         with:
-          time: '30s'
+          time: '60s'
 
       - name: Test
         run: npm run nx serve api & npm run e2e

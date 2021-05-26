@@ -4,7 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { User, UserSchema } from '@spikhouse/api-interfaces';
 import { Types } from 'mongoose';
 
-import { rootMongooseTestModule } from '../../../tests/tests.utils';
+import { closeInMongodbConnections, rootMongooseTestModule } from '../../../tests/tests.utils';
 
 import { UsersService } from './users.service';
 
@@ -30,8 +30,12 @@ describe('UsersService', () => {
         await app.close();
     });
 
+    afterAll(async () => {
+        await closeInMongodbConnections();
+    });
+
     describe('getUser', () => {
-        it('throws NotFoundException on unknown id', async () => {
+        it('returns null on unknown id', async () => {
             expect.assertions(1);
             const id = Types.ObjectId().toHexString();
             await expect(service.getUser(id)).resolves.toBeNull();

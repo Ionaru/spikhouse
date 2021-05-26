@@ -4,7 +4,7 @@ import { Test } from '@nestjs/testing';
 import { User, UserSchema } from '@spikhouse/api-interfaces';
 import * as request from 'supertest';
 
-import { rootMongooseTestModule } from '../../../tests/tests.utils';
+import { closeInMongodbConnections, rootMongooseTestModule } from '../../../tests/tests.utils';
 
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
@@ -33,6 +33,10 @@ describe('UsersController', () => {
 
     afterEach(async () => {
         await app.close();
+    });
+
+    afterAll(async () => {
+        await closeInMongodbConnections();
     });
 
     describe('/GET users', () => {
