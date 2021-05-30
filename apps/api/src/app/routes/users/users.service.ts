@@ -2,7 +2,6 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from '@spikhouse/api-interfaces';
 import { compare, hash } from 'bcrypt';
-import { MongoError } from 'mongodb';
 import { Model } from 'mongoose';
 
 @Injectable()
@@ -45,7 +44,7 @@ export class UsersService {
         try {
             await newUser.save();
         } catch (e) {
-            if (e instanceof MongoError && e.code === 11000) {
+            if (e.name === 'MongoError' && e.code === 11000) {
                 throw new ConflictException(email);
             }
             throw e;
