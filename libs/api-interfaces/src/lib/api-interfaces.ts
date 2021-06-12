@@ -34,6 +34,11 @@ export class LoginDto {
     public password!: string;
 }
 
+export class RoomPasswordDto {
+    @IsString()
+    public password!: string;
+}
+
 export class CreateRoomDto {
     @IsString()
     @MinLength(3)
@@ -53,4 +58,11 @@ export interface IRoom {
     updatedAt: Date | string;
     owner: User | mongoose.Schema.Types.ObjectId;
     hasPassword: boolean;
+}
+
+export interface IMessage {
+    content: string;
+    time: number;
+    password?: string;
+    sender: Partial<IUser>;
 }

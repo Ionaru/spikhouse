@@ -2,7 +2,7 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from '@spikhouse/api-interfaces';
 import { compare, hash } from 'bcrypt';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
 @Injectable()
 export class UsersService {
@@ -11,6 +11,9 @@ export class UsersService {
     ) {}
 
     public async getUser(id: string): Promise<UserDocument | null> {
+        if (!Types.ObjectId.isValid(id)) {
+            return null;
+        }
         return this.userModel.findById(id);
     }
 

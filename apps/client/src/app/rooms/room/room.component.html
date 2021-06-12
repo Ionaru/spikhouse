@@ -1,0 +1,43 @@
+<div class="container mt-3" *ngIf="roomId">
+
+    <div *ngIf="!connected">
+        <h2>Connecting to Room {{roomId}}...</h2>
+
+        <form *ngIf="needsPassword" [formGroup]="roomPasswordForm" (ngSubmit)="checkPassword()" class="col-lg-6">
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input class="form-control" type="password" [formControlName]="passwordProperty" autocomplete="off"
+                       required [name]="passwordProperty">
+                <div class="invalid-feedback" *ngIf="password?.errors?.required">
+                    Please enter a password.
+                </div>
+            </div>
+            <button class="btn btn-success" type="submit" [disabled]="!roomPasswordForm.valid || submitting">Enter</button>
+            <span class="ms-3">
+                <fa-icon *ngIf="submitting" [icon]="loadingIcon" [spin]="true" [fixedWidth]="true"></fa-icon>
+                <span class="text-danger" *ngIf="passwordError">{{ passwordError }}</span>
+            </span>
+        </form>
+    </div>
+
+    <div *ngIf="connected">
+        <p *ngFor="let message of messages">
+            <small class="text-dark">{{message.time | date: 'short'}}</small>
+            <strong class="ms-1" [class]="user._id === message.sender._id ? 'text-success' : 'text-primary'">
+                {{message.sender.displayName}}
+            </strong>
+            <span class="ms-1">{{message.content}}</span>
+        </p>
+
+        <form [noValidate]="true">
+            <div class="input-group mb-3 mt-2">
+                <input type="text" class="form-control" placeholder="message" [(ngModel)]="message"
+                       [formNoValidate]="true" (keyup.enter)="sendMessage(message)" name="message">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-primary" type="button" (click)="sendMessage(message)">Send</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
