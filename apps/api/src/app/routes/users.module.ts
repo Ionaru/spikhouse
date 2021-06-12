@@ -4,6 +4,7 @@ import { Room, RoomDocument, RoomSchema, User, UserDocument, UserSchema } from '
 import { Model } from 'mongoose';
 
 import { AuthController } from './auth/auth.controller';
+import { RoomGateway } from './rooms/room.gateway';
 import { RoomsController } from './rooms/rooms.controller';
 import { RoomsService } from './rooms/rooms.service';
 import { UsersController } from './users/users.controller';
@@ -18,7 +19,7 @@ import { UsersService } from './users/users.service';
             {name: Room.name, schema: RoomSchema},
         ]),
     ],
-    providers: [UsersService, RoomsService],
+    providers: [UsersService, RoomsService, RoomGateway],
 })
 export class UsersModule implements OnModuleInit {
     public constructor(

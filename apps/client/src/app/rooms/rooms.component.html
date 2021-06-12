@@ -15,11 +15,11 @@
             <div class="card m-1">
                 <div class="card-body">
                     <h5 class="card-title">{{room.name}}</h5>
-                    <a routerLink="/rooms/{{room._id}}" class="btn btn-primary disabled">
+                    <a routerLink="/room/{{room._id}}" class="btn btn-primary">
                         <fa-icon *ngIf="room.hasPassword" [icon]="passwordIcon"></fa-icon>
                         Join
                     </a>
-                    <button (click)="deleteRoom(room._id)" class="btn btn-danger ms-1">Delete</button>
+                    <button *ngIf="user._id === room.owner" (click)="deleteRoom(room._id)" class="btn btn-danger ms-1">Delete</button>
                 </div>
             </div>
         </div>

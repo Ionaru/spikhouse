@@ -10,7 +10,7 @@ import {
     Req,
     UseGuards,
 } from '@nestjs/common';
-import { CreateRoomDto, IRoom } from '@spikhouse/api-interfaces';
+import { CreateRoomDto, IRoom, RoomPasswordDto } from '@spikhouse/api-interfaces';
 import { Request } from 'express';
 
 import { AuthGuard } from '../../guards/auth.guard';
@@ -31,7 +31,7 @@ export class RoomsController {
     }
 
     @Get(':id')
-    public async getRoom(@Param() params: { id: string }): Promise<any> {
+    public async getRoom(@Param() params: { id: string }): Promise<IRoom> {
         const room = await this.roomsService.getRoom(params.id);
         if (!room) {
             throw new NotFoundException(params.id);
@@ -39,8 +39,13 @@ export class RoomsController {
         return room;
     }
 
+    @Post(':id')
+    public async testRoomPassword(@Param() params: { id: string }, @Body() data: RoomPasswordDto): Promise<boolean> {
+        return this.roomsService.checkRoomPassword(params.id, data.password);
+    }
+
     @Post()
-    public async createRoom(@Req() request: Request, @Body() data: CreateRoomDto): Promise<any> {
+    public async createRoom(@Req() request: Request, @Body() data: CreateRoomDto): Promise<IRoom> {
         if (!request.session.user) {
             throw new ForbiddenException();
         }

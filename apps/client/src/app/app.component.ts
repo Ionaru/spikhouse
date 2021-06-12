@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { IUser } from '@spikhouse/api-interfaces';
-import { Subscription, throwError } from 'rxjs';
+import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { AppReadyEventService } from './app-ready-event.service';
@@ -22,8 +22,8 @@ export class AppComponent {
         this.boot();
     }
 
-    private boot(): Subscription {
-        return this.shakeHands()
+    private boot(): void {
+        this.shakeHands()
             .pipe(
                 catchError((error: HttpErrorResponse) => {
                     this.appReadyEvent.triggerFailure(error);

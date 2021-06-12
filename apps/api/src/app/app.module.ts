@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import MongoStore from 'connect-mongo';
+import { SessionData } from 'express-session';
 import { SessionModule } from 'nestjs-session';
 
 import { UsersModule } from './routes/users.module';
@@ -20,10 +21,28 @@ const mongoUrl = 'mongodb://localhost/spikhouse';
                 resave: false,
                 saveUninitialized: false,
                 secret: process.env.SESSION_SECRET || 'spikhouse_secret',
-                store: MongoStore.create({mongoUrl}),
+                store: AppModule.mongoStore,
             },
         }),
         UsersModule,
     ],
 })
-export class AppModule {}
+export class AppModule {
+    public static readonly mongoStore = MongoStore.create({mongoUrl});
+
+    public static getSession(sessionId: string): Promise<SessionData> {
+        return new Promise(((resolve, reject) => {
+            AppModule.mongoStore.get(sessionId, (error: any, session: SessionData | undefined | null) => {
+                if (error) {
+                    return reject(error);
+                }
+
+                if (!session) {
+                    return reject('Invalid session');
+                }
+
+                return resolve(session);
+            });
+        }));
+    }
+}

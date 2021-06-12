@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Room, RoomDocument } from '@spikhouse/api-interfaces';
-import { hash } from 'bcrypt';
-import { Model } from 'mongoose';
+import { compare, hash } from 'bcrypt';
+import { Model, Types } from 'mongoose';
 
 @Injectable()
 export class RoomsService {
@@ -15,7 +15,19 @@ export class RoomsService {
     }
 
     public async getRoom(id: string): Promise<RoomDocument | null> {
+        if (!Types.ObjectId.isValid(id)) {
+            return null;
+        }
         return this.roomModel.findById(id);
+    }
+
+    public async checkRoomPassword(id: string, password: string): Promise<boolean> {
+        const room = await this.roomModel.findById(id).select('password');
+        if (!room) {
+            return false;
+        }
+
+        return compare(password, room.password);
     }
 
     public async deleteRoom(id: string): Promise<void> {

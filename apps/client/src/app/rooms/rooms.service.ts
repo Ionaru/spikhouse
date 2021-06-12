@@ -23,6 +23,10 @@ export class RoomsService {
         return this.http.get<IRoom>(`/api/rooms/${id}`);
     }
 
+    public testRoomPassword(id: string, password: string): Observable<boolean> {
+        return this.http.post<boolean>(`/api/rooms/${id}`, {password});
+    }
+
     public deleteRoom(id: string): Observable<unknown> {
         return this.http.delete(`/api/rooms/${id}`);
     }
