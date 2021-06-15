@@ -103,6 +103,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Set commit SHA (pull_request)
+        if: github.event_name == 'pull_request'
+        run: echo "commit_sha=$github.event.pull_request.head.sha" >> $GITHUB_ENV
+
+      - name: Set commit SHA (push)
+        if: github.event_name == 'push'
+        run: echo "commit_sha=$github.sha" >> $GITHUB_ENV
+
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
@@ -111,15 +119,15 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: npm run nx build-image ${{matrix.app}} -- --tag ${{github.sha}}
+        run: npm run nx build-image ${{matrix.app}} -- --tag ${{commit_sha}}
 
       - name: Save image
-        run: docker save ${{matrix.app}}:${{github.sha}} > ${{matrix.app}}-${{github.sha}}-image.tar
+        run: docker save ${{matrix.app}}:${{commit_sha}} > ${{matrix.app}}-${{commit_sha}}-image.tar
 
       - uses: actions/upload-artifact@v2
         with:
-          name: ${{matrix.app}}-${{github.sha}}-image
-          path: ${{matrix.app}}-${{github.sha}}-image.tar
+          name: ${{matrix.app}}-${{commit_sha}}-image
+          path: ${{matrix.app}}-${{commit_sha}}-image.tar
           retention-days: 1
 
   push-image:
@@ -134,16 +142,26 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+
+      - name: Set commit SHA (pull_request)
+        if: github.event_name == 'pull_request'
+        run: echo "commit_sha=$github.event.pull_request.head.sha" >> $GITHUB_ENV
+
+      - name: Set commit SHA (push)
+        if: github.event_name == 'push'
+        run: echo "commit_sha=$github.sha" >> $GITHUB_ENV
+
       - name: Retrieve saved Docker image
         uses: actions/download-artifact@v2
         with:
-          name: ${{matrix.app}}-${{github.sha}}-image
+          name: ${{matrix.app}}-${{commit_sha}}-image
 
       - name: Load image into docker
-        run: docker load < ${{matrix.app}}-${{github.sha}}-image.tar
+        run: docker load < ${{matrix.app}}-${{commit_sha}}-image.tar
 
       - name: Retag image for upload
-        run: docker tag ${{matrix.app}}:${{github.sha}} docker.saturnserver.org/rangers/${{matrix.app}}:${{github.sha}}
+        run: docker tag ${{matrix.app}}:${{commit_sha}} docker.saturnserver.org/spikhouse/${{matrix.app}}:${{commit_sha}}
 
       - name: Login to Docker Registry
         uses: docker/login-action@v1
@@ -153,6 +171,6 @@ jobs:
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
       - name: Push image
-        run: docker push docker.saturnserver.org/rangers/${{matrix.app}}:${{github.sha}}
+        run: docker push docker.saturnserver.org/spikhouse/${{matrix.app}}:${{commit_sha}}
 
   # TODO: Deployment
