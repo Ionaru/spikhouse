@@ -111,15 +111,15 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: npm run nx build-image ${{matrix.app}} -- --tag ${{GITHUB_SHA}}
+        run: npm run nx build-image ${{matrix.app}} -- --tag ${{github.sha}}
 
       - name: Save image
-        run: docker save ${{matrix.app}}:${{GITHUB_SHA}} > ${{matrix.app}}-${{GITHUB_SHA}}-image.tar
+        run: docker save ${{matrix.app}}:${{github.sha}} > ${{matrix.app}}-${{github.sha}}-image.tar
 
       - uses: actions/upload-artifact@v2
         with:
-          name: ${{matrix.app}}-${{GITHUB_SHA}}-image
-          path: ${{matrix.app}}-${{GITHUB_SHA}}-image.tar
+          name: ${{matrix.app}}-${{github.sha}}-image
+          path: ${{matrix.app}}-${{github.sha}}-image.tar
           retention-days: 1
 
   push-image:
@@ -137,13 +137,13 @@ jobs:
       - name: Retrieve saved Docker image
         uses: actions/download-artifact@v2
         with:
-          name: ${{matrix.app}}-${{GITHUB_SHA}}-image
+          name: ${{matrix.app}}-${{github.sha}}-image
 
       - name: Load image into docker
-        run: docker load < ${{matrix.app}}-${{GITHUB_SHA}}-image.tar
+        run: docker load < ${{matrix.app}}-${{github.sha}}-image.tar
 
       - name: Retag image for upload
-        run: docker tag ${{matrix.app}}:${{GITHUB_SHA}} docker.saturnserver.org/rangers/${{matrix.app}}:${{GITHUB_SHA}}
+        run: docker tag ${{matrix.app}}:${{github.sha}} docker.saturnserver.org/rangers/${{matrix.app}}:${{github.sha}}
 
       - name: Login to Docker Registry
         uses: docker/login-action@v1
@@ -153,6 +153,6 @@ jobs:
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
       - name: Push image
-        run: docker push docker.saturnserver.org/rangers/${{matrix.app}}:${{GITHUB_SHA}}
+        run: docker push docker.saturnserver.org/rangers/${{matrix.app}}:${{github.sha}}
 
   # TODO: Deployment
