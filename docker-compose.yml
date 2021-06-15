@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+
+  db:
+    image: mongo:4
+    volumes:
+      - ${SPIKHOUSE_DB_VOLUME}:/data/db
+    restart: unless-stopped
+
+  api:
+    image: ${SPIKHOUSE_API_IMAGE:-docker.saturnserver.org/spikhouse/api}:${SPIKHOUSE_TAG:-latest}
+    depends_on:
+      - db
+    environment:
+      - SPIKHOUSE_API_PORT
+      - SPIKHOUSE_API_LOGGING
+      - SPIKHOUSE_API_SESSION_NAME
+      - SPIKHOUSE_API_SESSION_SECRET
+      - SPIKHOUSE_API_DB_HOST
+    ports:
+      - "${SPIKHOUSE_API_PORT:-3333}:${SPIKHOUSE_API_PORT:-3333}"
+    restart: unless-stopped
+
+  client:
+    image: ${SPIKHOUSE_CLIENT_IMAGE:-docker.saturnserver.org/spikhouse/client}:${SPIKHOUSE_TAG:-latest}
+    depends_on:
+      - api
+    environment:
+      - SPIKHOUSE_API_PORT
+    ports:
+      - "${SPIKHOUSE_CLIENT_PORT:-80}:${SPIKHOUSE_CLIENT_PORT:-80}"
+    restart: unless-stopped

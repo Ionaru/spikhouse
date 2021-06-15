@@ -4,9 +4,11 @@ import MongoStore from 'connect-mongo';
 import { SessionData } from 'express-session';
 import { SessionModule } from 'nestjs-session';
 
+import { environment } from '../environments/environment';
+
 import { UsersModule } from './routes/users.module';
 
-const mongoUrl = 'mongodb://localhost/spikhouse';
+const mongoUrl = `mongodb://${environment.dbHost}/spikhouse`;
 
 @Module({
     imports: [
@@ -17,10 +19,10 @@ const mongoUrl = 'mongodb://localhost/spikhouse';
                 cookie: {
                     maxAge: 604_800_000, // 7 days
                 },
-                name: 'Spikhouse',
+                name: process.env.SPIKHOUSE_API_SESSION_NAME || 'Spikhouse',
                 resave: false,
                 saveUninitialized: false,
-                secret: process.env.SESSION_SECRET || 'spikhouse_secret',
+                secret: process.env.SPIKHOUSE_API_SESSION_SECRET || 'spikhouse_secret',
                 store: AppModule.mongoStore,
             },
         }),
