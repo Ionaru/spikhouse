@@ -119,15 +119,15 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: npm run nx build-image ${{matrix.app}} -- --tag ${{commit_sha}}
+        run: npm run nx build-image ${{matrix.app}} -- --tag ${{env.commit_sha}}
 
       - name: Save image
-        run: docker save ${{matrix.app}}:${{commit_sha}} > ${{matrix.app}}-${{commit_sha}}-image.tar
+        run: docker save ${{matrix.app}}:${{env.commit_sha}} > ${{matrix.app}}-${{env.commit_sha}}-image.tar
 
       - uses: actions/upload-artifact@v2
         with:
-          name: ${{matrix.app}}-${{commit_sha}}-image
-          path: ${{matrix.app}}-${{commit_sha}}-image.tar
+          name: ${{matrix.app}}-${{env.commit_sha}}-image
+          path: ${{matrix.app}}-${{env.commit_sha}}-image.tar
           retention-days: 1
 
   push-image:
@@ -155,13 +155,13 @@ jobs:
       - name: Retrieve saved Docker image
         uses: actions/download-artifact@v2
         with:
-          name: ${{matrix.app}}-${{commit_sha}}-image
+          name: ${{matrix.app}}-${{env.commit_sha}}-image
 
       - name: Load image into docker
-        run: docker load < ${{matrix.app}}-${{commit_sha}}-image.tar
+        run: docker load < ${{matrix.app}}-${{env.commit_sha}}-image.tar
 
       - name: Retag image for upload
-        run: docker tag ${{matrix.app}}:${{commit_sha}} docker.saturnserver.org/spikhouse/${{matrix.app}}:${{commit_sha}}
+        run: docker tag ${{matrix.app}}:${{env.commit_sha}} docker.saturnserver.org/spikhouse/${{matrix.app}}:${{env.commit_sha}}
 
       - name: Login to Docker Registry
         uses: docker/login-action@v1
@@ -171,6 +171,6 @@ jobs:
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
       - name: Push image
-        run: docker push docker.saturnserver.org/spikhouse/${{matrix.app}}:${{commit_sha}}
+        run: docker push docker.saturnserver.org/spikhouse/${{matrix.app}}:${{env.commit_sha}}
 
   # TODO: Deployment
