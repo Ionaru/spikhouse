@@ -105,11 +105,11 @@ jobs:
 
       - name: Set commit SHA (pull_request)
         if: github.event_name == 'pull_request'
-        run: echo "commit_sha=$github.event.pull_request.head.sha" >> $GITHUB_ENV
+        run: echo "commit_sha=${{github.event.pull_request.head.sha}}" >> $GITHUB_ENV
 
       - name: Set commit SHA (push)
         if: github.event_name == 'push'
-        run: echo "commit_sha=$github.sha" >> $GITHUB_ENV
+        run: echo "commit_sha=${{github.sha}}" >> $GITHUB_ENV
 
       - uses: actions/setup-node@v2
         with:
@@ -146,11 +146,11 @@ jobs:
 
       - name: Set commit SHA (pull_request)
         if: github.event_name == 'pull_request'
-        run: echo "commit_sha=$github.event.pull_request.head.sha" >> $GITHUB_ENV
+        run: echo "commit_sha=${{github.event.pull_request.head.sha}}" >> $GITHUB_ENV
 
       - name: Set commit SHA (push)
         if: github.event_name == 'push'
-        run: echo "commit_sha=$github.sha" >> $GITHUB_ENV
+        run: echo "commit_sha=${{github.sha}}" >> $GITHUB_ENV
 
       - name: Retrieve saved Docker image
         uses: actions/download-artifact@v2
