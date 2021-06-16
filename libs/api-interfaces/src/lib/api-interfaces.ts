@@ -66,3 +66,10 @@ export interface IMessage {
     password?: string;
     sender: Partial<IUser>;
 }
+
+export interface IAPIEnvironment {
+    dbHost: string;
+    production: boolean;
+    sessionName: string;
+    sessionSecret: string;
+}
