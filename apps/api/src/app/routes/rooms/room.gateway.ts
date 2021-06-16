@@ -12,6 +12,7 @@ import * as cookieParser from 'cookie-parser';
 import { SessionData } from 'express-session';
 import { Server, Socket } from 'socket.io';
 
+import { environment } from '../../../environments/environment';
 import { AppModule } from '../../app.module';
 
 import { RoomsService } from './rooms.service';
@@ -21,6 +22,9 @@ export class RoomGateway {
 
     @WebSocketServer()
     private server?: Server;
+
+    private readonly cookieName = environment.sessionName;
+    private readonly cookieSecret = environment.sessionSecret;
 
     public constructor(
         private readonly roomsService: RoomsService,
@@ -34,32 +38,9 @@ export class RoomGateway {
         return user;
     }
 
-    private static async validateSession(input: string, sender?: string): Promise<void> {
-        const cookies = cookie.parse(input);
-        if (!cookies.Spikhouse) {
-            throw new WsException('No cookie');
-        }
-
-        const cookieContents = cookieParser.signedCookie(cookies.Spikhouse, 'spikhouse_secret');
-        if (!cookieContents) {
-            throw new WsException('No cookie');
-        }
-
-        let session: SessionData;
-        try {
-            session = await AppModule.getSession(cookieContents);
-        } catch (e) {
-            throw new WsException(e);
-        }
-
-        if (session.user !== sender) {
-            throw new WsException('Invalid session');
-        }
-    }
-
     @SubscribeMessage('joinRoom')
     public async joinRoom(@ConnectedSocket() client: Socket, @MessageBody() data: IMessage): Promise<void> {
-        await RoomGateway.validateSession(client.handshake.headers.cookie, data.sender._id);
+        await this.validateSession(client.handshake.headers.cookie, data.sender._id);
         data.sender = RoomGateway.sanitizeUser(data.sender);
 
         const room = await this.roomsService.getRoom(data.content);
@@ -87,10 +68,34 @@ export class RoomGateway {
 
     @SubscribeMessage('message')
     public async message(@ConnectedSocket() client: Socket, @MessageBody() data: IMessage): Promise<void> {
-        await RoomGateway.validateSession(client.handshake.headers.cookie, data.sender._id);
+        await this.validateSession(client.handshake.headers.cookie, data.sender._id);
         data.sender = RoomGateway.sanitizeUser(data.sender);
 
         Object.values(client.rooms).forEach((room) => client.to(room).emit('message', data));
+    }
+
+    private async validateSession(input: string, sender?: string): Promise<void> {
+        const cookies = cookie.parse(input);
+        const spikhouseCookie = cookies[this.cookieName];
+        if (!spikhouseCookie) {
+            throw new WsException('No cookie');
+        }
+
+        const cookieContents = cookieParser.signedCookie(spikhouseCookie, this.cookieSecret);
+        if (!cookieContents) {
+            throw new WsException('No cookie');
+        }
+
+        let session: SessionData;
+        try {
+            session = await AppModule.getSession(cookieContents);
+        } catch (e) {
+            throw new WsException(e);
+        }
+
+        if (session.user !== sender) {
+            throw new WsException('Invalid session');
+        }
     }
 
 }

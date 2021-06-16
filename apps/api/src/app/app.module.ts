@@ -19,10 +19,10 @@ const mongoUrl = `mongodb://${environment.dbHost}/spikhouse`;
                 cookie: {
                     maxAge: 604_800_000, // 7 days
                 },
-                name: process.env.SPIKHOUSE_API_SESSION_NAME || 'Spikhouse',
+                name: environment.sessionName,
                 resave: false,
                 saveUninitialized: false,
-                secret: process.env.SPIKHOUSE_API_SESSION_SECRET || 'spikhouse_secret',
+                secret: environment.sessionSecret,
                 store: AppModule.mongoStore,
             },
         }),
