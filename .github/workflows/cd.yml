@@ -23,11 +23,11 @@ jobs:
         run: npm audit --production
 
   test-unit:
-    needs: [audit]
+    needs: [ audit ]
 
     strategy:
       matrix:
-        app: [api, client]
+        app: [ api, client ]
 
     runs-on: ubuntu-latest
 
@@ -50,7 +50,7 @@ jobs:
         run: npm test ${{matrix.app}}
 
   test-e2e:
-    needs: [audit]
+    needs: [ audit ]
 
     runs-on: ubuntu-latest
 
@@ -92,4 +92,87 @@ jobs:
           path: dist/cypress/apps/client-e2e/videos
           retention-days: 1
 
-  # TODO: Docker steps & deployment
+  build-image:
+    needs: [ test-unit, test-e2e ]
+
+    strategy:
+      matrix:
+        app: [ api, client ]
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set commit SHA (pull_request)
+        if: github.event_name == 'pull_request'
+        run: echo "commit_sha=${{github.event.pull_request.head.sha}}" >> $GITHUB_ENV
+
+      - name: Set commit SHA (push)
+        if: github.event_name == 'push'
+        run: echo "commit_sha=${{github.sha}}" >> $GITHUB_ENV
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install packages
+        run: npm ci
+
+      - name: Build
+        run: npm run nx build-image ${{matrix.app}} -- --tag ${{env.commit_sha}}
+
+      - name: Save image
+        run: docker save ${{matrix.app}}:${{env.commit_sha}} > ${{matrix.app}}-${{env.commit_sha}}-image.tar
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ${{matrix.app}}-${{env.commit_sha}}-image
+          path: ${{matrix.app}}-${{env.commit_sha}}-image.tar
+          retention-days: 1
+
+  push-image:
+    needs: [ build-image ]
+
+    # Only for pushes to the 'main' branch
+    if: github.event_name == 'push'
+
+    strategy:
+      matrix:
+        app: [ api, client ]
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Retrieve saved Docker image
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{matrix.app}}-${{github.sha}}-image
+
+      - name: Load image into docker
+        run: docker load < ${{matrix.app}}-${{github.sha}}-image.tar
+
+      - name: Retag image for upload
+        run: docker tag ${{matrix.app}}:${{github.sha}} docker.saturnserver.org/spikhouse/${{matrix.app}}:${{github.sha}}
+
+      - name: Login to Docker Registry
+        uses: docker/login-action@v1
+        with:
+          registry: docker.saturnserver.org
+          username: ${{ secrets.REGISTRY_USER }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Push image
+        run: docker push docker.saturnserver.org/spikhouse/${{matrix.app}}:${{github.sha}}
+
+  deploy:
+    needs: [ push-image ]
+
+    if: github.event_name == 'push'
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Deploy
+        run: npx -q @ionaru/teamcity-deploy teamcity.saturnserver.org Spikhouse_Deploy ${{secrets.TEAMCITY_TOKEN}} env.SPIKHOUSE_TAG=${{github.sha}}
