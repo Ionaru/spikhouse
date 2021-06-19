@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import MongoStore from 'connect-mongo';
 import { SessionData } from 'express-session';
-import { SessionModule } from 'nestjs-session';
 
 import { environment } from '../environments/environment';
 
@@ -14,18 +13,6 @@ const mongoUrl = `mongodb://${environment.dbHost}/spikhouse`;
     imports: [
         // Creates the database connection automatically on application startup.
         MongooseModule.forRoot(mongoUrl, {useCreateIndex: true}),
-        SessionModule.forRoot({
-            session: {
-                cookie: {
-                    maxAge: 604_800_000, // 7 days
-                },
-                name: environment.sessionName,
-                resave: false,
-                saveUninitialized: false,
-                secret: environment.sessionSecret,
-                store: AppModule.mongoStore,
-            },
-        }),
         UsersModule,
     ],
 })

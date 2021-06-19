@@ -32,6 +32,85 @@
         }
     },
     "projects": {
+        "api": {
+            "root": "apps/api",
+            "sourceRoot": "apps/api/src",
+            "projectType": "application",
+            "prefix": "api",
+            "architect": {
+                "build": {
+                    "builder": "@nrwl/node:build",
+                    "outputs": ["{options.outputPath}"],
+                    "options": {
+                        "outputPath": "dist/apps/api",
+                        "main": "apps/api/src/main.ts",
+                        "tsConfig": "apps/api/tsconfig.app.json"
+                    },
+                    "configurations": {
+                        "production": {
+                            "optimization": true,
+                            "extractLicenses": true,
+                            "inspect": false,
+                            "fileReplacements": [
+                                {
+                                    "replace": "apps/api/src/environments/environment.ts",
+                                    "with": "apps/api/src/environments/environment.prod.ts"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "build-image": {
+                    "builder": "@nrwl/workspace:run-commands",
+                    "options": {
+                        "commands": [
+                            {
+                                "command": "nx build api --prod",
+                                "forwardAllArgs": false
+                            },
+                            {
+                                "command": "docker build -f ./apps/api/Dockerfile -t api:{args.tag} ."
+                            }
+                        ],
+                        "parallel": false
+                    }
+                },
+                "serve": {
+                    "builder": "@nrwl/node:execute",
+                    "options": {
+                        "buildTarget": "api:build",
+                        "port": 9229
+                    }
+                },
+                "lint": {
+                    "builder": "@nrwl/linter:eslint",
+                    "options": {
+                        "lintFilePatterns": ["apps/api/**/*.ts"]
+                    }
+                },
+                "test": {
+                    "builder": "@nrwl/jest:jest",
+                    "outputs": ["coverage/apps/api"],
+                    "options": {
+                        "jestConfig": "apps/api/jest.config.js",
+                        "passWithNoTests": true
+                    }
+                }
+            }
+        },
+        "api-interfaces": {
+            "root": "libs/api-interfaces",
+            "sourceRoot": "libs/api-interfaces/src",
+            "projectType": "library",
+            "architect": {
+                "lint": {
+                    "builder": "@nrwl/linter:eslint",
+                    "options": {
+                        "lintFilePatterns": ["libs/api-interfaces/**/*.ts"]
+                    }
+                }
+            }
+        },
         "client": {
             "projectType": "application",
             "root": "apps/client",
@@ -45,7 +124,10 @@
                         "index": "apps/client/src/index.html",
                         "main": "apps/client/src/main.ts",
                         "tsConfig": "apps/client/tsconfig.app.json",
-                        "assets": ["apps/client/src/favicon.ico", "apps/client/src/assets"],
+                        "assets": [
+                            "apps/client/src/favicon.ico",
+                            "apps/client/src/assets"
+                        ],
                         "styles": ["apps/client/src/styles.scss"],
                         "scripts": [],
                         "vendorChunk": true,
@@ -159,85 +241,6 @@
                     "builder": "@nrwl/linter:eslint",
                     "options": {
                         "lintFilePatterns": ["apps/client-e2e/**/*.{js,ts}"]
-                    }
-                }
-            }
-        },
-        "api": {
-            "root": "apps/api",
-            "sourceRoot": "apps/api/src",
-            "projectType": "application",
-            "prefix": "api",
-            "architect": {
-                "build": {
-                    "builder": "@nrwl/node:build",
-                    "outputs": ["{options.outputPath}"],
-                    "options": {
-                        "outputPath": "dist/apps/api",
-                        "main": "apps/api/src/main.ts",
-                        "tsConfig": "apps/api/tsconfig.app.json"
-                    },
-                    "configurations": {
-                        "production": {
-                            "optimization": true,
-                            "extractLicenses": true,
-                            "inspect": false,
-                            "fileReplacements": [
-                                {
-                                    "replace": "apps/api/src/environments/environment.ts",
-                                    "with": "apps/api/src/environments/environment.prod.ts"
-                                }
-                            ]
-                        }
-                    }
-                },
-                "build-image": {
-                    "builder": "@nrwl/workspace:run-commands",
-                    "options": {
-                        "commands": [
-                            {
-                                "command": "nx build api --prod",
-                                "forwardAllArgs": false
-                            },
-                            {
-                                "command": "docker build -f ./apps/api/Dockerfile -t api:{args.tag} ."
-                            }
-                        ],
-                        "parallel": false
-                    }
-                },
-                "serve": {
-                    "builder": "@nrwl/node:execute",
-                    "options": {
-                        "buildTarget": "api:build",
-                        "port": 9229
-                    }
-                },
-                "lint": {
-                    "builder": "@nrwl/linter:eslint",
-                    "options": {
-                        "lintFilePatterns": ["apps/api/**/*.ts"]
-                    }
-                },
-                "test": {
-                    "builder": "@nrwl/jest:jest",
-                    "outputs": ["coverage/apps/api"],
-                    "options": {
-                        "jestConfig": "apps/api/jest.config.js",
-                        "passWithNoTests": true
-                    }
-                }
-            }
-        },
-        "api-interfaces": {
-            "root": "libs/api-interfaces",
-            "sourceRoot": "libs/api-interfaces/src",
-            "projectType": "library",
-            "architect": {
-                "lint": {
-                    "builder": "@nrwl/linter:eslint",
-                    "options": {
-                        "lintFilePatterns": ["libs/api-interfaces/**/*.ts"]
                     }
                 }
             }
