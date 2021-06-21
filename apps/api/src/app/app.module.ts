@@ -12,26 +12,32 @@ const mongoUrl = `mongodb://${environment.dbHost}/spikhouse`;
 @Module({
     imports: [
         // Creates the database connection automatically on application startup.
-        MongooseModule.forRoot(mongoUrl, {useCreateIndex: true}),
+        MongooseModule.forRoot(mongoUrl, {
+            useCreateIndex: true,
+            useFindAndModify: false,
+        }),
         UsersModule,
     ],
 })
 export class AppModule {
-    public static readonly mongoStore = MongoStore.create({mongoUrl});
+    public static readonly mongoStore = MongoStore.create({ mongoUrl });
 
     public static getSession(sessionId: string): Promise<SessionData> {
-        return new Promise(((resolve, reject) => {
-            AppModule.mongoStore.get(sessionId, (error: any, session: SessionData | undefined | null) => {
-                if (error) {
-                    return reject(error);
-                }
+        return new Promise((resolve, reject) => {
+            AppModule.mongoStore.get(
+                sessionId,
+                (error: any, session: SessionData | undefined | null) => {
+                    if (error) {
+                        return reject(error);
+                    }
 
-                if (!session) {
-                    return reject('Invalid session');
-                }
+                    if (!session) {
+                        return reject('Invalid session');
+                    }
 
-                return resolve(session);
-            });
-        }));
+                    return resolve(session);
+                },
+            );
+        });
     }
 }
