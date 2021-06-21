@@ -1,9 +1,17 @@
 import { Module, OnModuleInit } from '@nestjs/common';
 import { InjectModel, MongooseModule } from '@nestjs/mongoose';
-import { Room, RoomDocument, RoomSchema, User, UserDocument, UserSchema } from '@spikhouse/api-interfaces';
+import {
+    Room,
+    RoomDocument,
+    RoomSchema,
+    User,
+    UserDocument,
+    UserSchema,
+} from '@spikhouse/api-interfaces';
 import { Model } from 'mongoose';
 
 import { AuthController } from './auth/auth.controller';
+import { CallsGateway } from './calls/calls.gateway';
 import { RoomGateway } from './rooms/room.gateway';
 import { RoomsController } from './rooms/rooms.controller';
 import { RoomsService } from './rooms/rooms.service';
@@ -15,11 +23,11 @@ import { UsersService } from './users/users.service';
     imports: [
         // This allows us to use the UserSchema in this module.
         MongooseModule.forFeature([
-            {name: User.name, schema: UserSchema},
-            {name: Room.name, schema: RoomSchema},
+            { name: User.name, schema: UserSchema },
+            { name: Room.name, schema: RoomSchema },
         ]),
     ],
-    providers: [UsersService, RoomsService, RoomGateway],
+    providers: [UsersService, RoomsService, RoomGateway, CallsGateway],
 })
 export class UsersModule implements OnModuleInit {
     public constructor(
@@ -37,5 +45,4 @@ export class UsersModule implements OnModuleInit {
         await this.userModel.syncIndexes();
         await this.roomModel.syncIndexes();
     }
-
 }
