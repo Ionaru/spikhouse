@@ -6,7 +6,7 @@ import {
     WebSocketServer,
     WsException,
 } from '@nestjs/websockets';
-import {
+import type {
     IDisconnectMessage,
     IIceCandidateMessage,
     IInitCallMessage,
@@ -155,7 +155,7 @@ export class CallsGateway {
         );
         data.sender = CallsGateway.sanitizeUser(data.sender);
 
-        client.to(data.room).emit('offerIceCanditateResponse', data);
+        client.to(data.room).emit('offerIceCandidateResponse', data);
     }
 
     @SubscribeMessage('answerIceCandidate')
@@ -170,7 +170,7 @@ export class CallsGateway {
         data.sender = CallsGateway.sanitizeUser(data.sender);
 
         const receiver = this.presenters[data.room];
-        receiver.emit('answerIceCanditateResponse', data);
+        receiver.emit('answerIceCandidateResponse', data);
     }
 
     @SubscribeMessage('disconnectCall')

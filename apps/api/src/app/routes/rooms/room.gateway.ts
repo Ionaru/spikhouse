@@ -6,7 +6,7 @@ import {
     WebSocketServer,
     WsException,
 } from '@nestjs/websockets';
-import { IMessage, IUser } from '@spikhouse/api-interfaces';
+import type { IMessage, IUser } from '@spikhouse/api-interfaces';
 import * as cookie from 'cookie';
 import * as cookieParser from 'cookie-parser';
 import { SessionData } from 'express-session';

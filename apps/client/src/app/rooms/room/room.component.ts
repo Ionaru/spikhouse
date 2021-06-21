@@ -62,6 +62,7 @@ export class RoomComponent implements OnInit, OnDestroy, AfterViewInit {
             this.videoElement.nativeElement.srcObject = this.videoStream;
         }
     }
+
     public get videoStream(): MediaStream {
         return this._videoStream;
     }
@@ -77,6 +78,7 @@ export class RoomComponent implements OnInit, OnDestroy, AfterViewInit {
             Validators.minLength(3),
         ]),
     });
+
     public get password(): AbstractControl | null {
         return this.roomPasswordForm.get(this.passwordProperty);
     }
@@ -153,7 +155,7 @@ export class RoomComponent implements OnInit, OnDestroy, AfterViewInit {
             if (!correct) {
                 this.passwordError = 'Password incorrect';
             } else {
-                this.connectSocket();
+                this.connectSocket().then();
             }
         });
     }
@@ -297,7 +299,7 @@ export class RoomComponent implements OnInit, OnDestroy, AfterViewInit {
         );
 
         this.socket.on(
-            'answerIceCanditateResponse',
+            'answerIceCandidateResponse',
             async (message: IIceCandidateMessage) => {
                 await this.webrtcService.addIceCandidate(message);
             },
@@ -330,7 +332,7 @@ export class RoomComponent implements OnInit, OnDestroy, AfterViewInit {
                 if (this.isPlaying) {
                     const answer = await this.webrtcService.createAnswer(
                         this.videoStream,
-                        { sdp: message.sdp, type: message.type },
+                        {sdp: message.sdp, type: message.type},
                     );
 
                     if (this.videoElement) {
@@ -349,7 +351,7 @@ export class RoomComponent implements OnInit, OnDestroy, AfterViewInit {
         );
 
         this.socket.on(
-            'offerIceCanditateResponse',
+            'offerIceCandidateResponse',
             async (message: IIceCandidateMessage) => {
                 await this.webrtcService.addIceCandidate(message);
             },
