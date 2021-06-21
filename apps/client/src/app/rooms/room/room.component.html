@@ -1,7 +1,11 @@
 <div *ngIf="roomId" class="container mt-3">
 
+    <h1>{{roomName}}</h1>
+
+    <hr>
+
     <div *ngIf="!connected">
-        <h2>Connecting to {{roomName}} ...</h2>
+        <h2>Connecting...</h2>
 
         <form *ngIf="needsPassword" [formGroup]="roomPasswordForm" (ngSubmit)="checkPassword()" class="col-lg-6">
             <div class="mb-3">
@@ -21,6 +25,7 @@
     </div>
 
     <div *ngIf="connected" class="d-block d-md-flex flex-md-grow-1 ">
+
         <div class="flex-grow-1 py-8">
             <video #videoElement autoplay playsinline class="ratio ratio-16x9" style="background-color: #eee; max-height: 80vh;"></video>
             <div *ngIf="isOwner" class="d-flex justify-content-end">
@@ -28,7 +33,7 @@
                 <button *ngIf="isPlaying" (click)="disconnect()" type="button" class="btn btn-danger">Disconnect</button>
             </div>
             <div *ngIf="!isOwner" class="d-flex justify-content-end">
-                <button *ngIf="!isPlaying" (click)="watch()" type="button" class="btn btn-success">Start Watching</button> 
+                <button *ngIf="!isPlaying" (click)="watch()" type="button" class="btn btn-success">Start Watching</button>
             </div>
         </div>
         <div class="d-flex flex-column mt-4 mt-md-0 ms-md-4">
@@ -41,7 +46,7 @@
                     <span class="ms-1">{{message.content}}</span>
                 </p>
             </div>
-    
+
             <form [noValidate]="true">
                 <div class="input-group mt-2">
                     <input type="text" class="form-control me-3" placeholder="message" [(ngModel)]="message"
