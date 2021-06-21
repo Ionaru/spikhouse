@@ -50,7 +50,7 @@ export class CreateRoomComponent {
             catchError((error: HttpErrorResponse) => this.handleError(error)),
             finalize(() => this.submitting = false),
         ).subscribe((response) => {
-            this.router.navigate([`/rooms/${response._id}`]).then();
+            this.router.navigate([`/room/${response._id}`]).then();
         });
     }
 
