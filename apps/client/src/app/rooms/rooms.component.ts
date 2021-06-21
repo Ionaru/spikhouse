@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { faLock } from '@fortawesome/free-solid-svg-icons';
 import { IRoom } from '@spikhouse/api-interfaces';
 
@@ -15,6 +16,7 @@ export class RoomsComponent implements OnInit {
 
     public constructor(
         private readonly roomsService: RoomsService,
+        private readonly router: Router,
     ) {}
 
     public rooms: IRoom[] = [];
@@ -34,10 +36,6 @@ export class RoomsComponent implements OnInit {
     }
 
     public async createRoom(): Promise<void> {
-        this.roomsService.createRoom(`Room ${Date.now()}`).subscribe(() => this.ngOnInit());
-    }
-
-    public async createRoomWithPassword(): Promise<void> {
-        this.roomsService.createRoom(`Room ${Date.now()}`, '123').subscribe(() => this.ngOnInit());
+        this.router.navigate(['/rooms/create']).then();
     }
 }

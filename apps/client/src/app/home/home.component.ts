@@ -62,10 +62,13 @@ export class HomeComponent implements OnInit {
     }
 
     public handleError(error: HttpErrorResponse): Observable<never> {
+        this.loginError = 'Unknown error, please try again later.';
         if (error.status === StatusCodes.NOT_FOUND) {
             this.loginError = 'Unknown login.';
+        } else {
+            return throwError(error);
         }
 
-        return throwError(this.loginError || error);
+        return throwError(this.loginError);
     }
 }

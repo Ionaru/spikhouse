@@ -8,7 +8,7 @@
         <form [formGroup]="loginForm" (ngSubmit)="login()" class="col-lg-6">
             <div class="mb-3">
                 <label class="form-label">Email</label>
-                <input class="form-control" type="email" [formControlName]="emailProperty" autocomplete="email"
+                <input class="form-control validate" type="email" [formControlName]="emailProperty" autocomplete="email"
                        required [name]="emailProperty">
                 <div class="invalid-feedback" *ngIf="email?.errors">
                     Please provide a valid email address.
@@ -17,7 +17,7 @@
 
             <div class="mb-3">
                 <label class="form-label">Password</label>
-                <input class="form-control" type="password" [formControlName]="passwordProperty" autocomplete="password"
+                <input class="form-control validate" type="password" [formControlName]="passwordProperty" autocomplete="password"
                        required [name]="passwordProperty">
                 <div class="invalid-feedback" *ngIf="password?.errors?.required">
                     Please enter a password.

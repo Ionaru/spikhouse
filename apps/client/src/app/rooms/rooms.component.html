@@ -6,7 +6,6 @@
                 <div class="card-body">
                     <h5 class="card-title">Create a new room</h5>
                     <a (click)="createRoom()" class="btn btn-success">Create</a>
-                    <a (click)="createRoomWithPassword()" class="btn btn-warning ms-1">Create with password</a>
                 </div>
             </div>
         </div>
@@ -19,7 +18,9 @@
                         <fa-icon *ngIf="room.hasPassword" [icon]="passwordIcon"></fa-icon>
                         Join
                     </a>
-                    <button *ngIf="user._id === room.owner" (click)="deleteRoom(room._id)" class="btn btn-danger ms-1">Delete</button>
+                    <button *ngIf="user._id === room.owner" (click)="deleteRoom(room._id)" class="btn btn-danger ms-1">
+                        Delete
+                    </button>
                 </div>
             </div>
         </div>

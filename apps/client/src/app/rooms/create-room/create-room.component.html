@@ -1,0 +1,41 @@
+<div class="container mt-3">
+    <h1 class="text-center">Create a new room</h1>
+
+    <hr>
+
+    <div style="display:none;">
+        <input type="text" autocomplete="name">
+        <input type="password" autocomplete="password">
+    </div>
+
+    <div class="row justify-content-center">
+        <form [formGroup]="createRoomForm" (ngSubmit)="create()" class="col-lg-6">
+            <div class="mb-3">
+                <label class="form-label">Room name</label>
+                <input class="form-control validate" type="text" [formControlName]="nameProperty" autocomplete="new-name"
+                       required [name]="nameProperty">
+                <div class="invalid-feedback" *ngIf="name?.errors?.required">
+                    Please provide a name.
+                </div>
+                <div class="invalid-feedback" *ngIf="name?.errors?.minlength">
+                    Name must be {{name.errors.minlength.requiredLength}} characters or more.
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Room password (optional)</label>
+                <input class="form-control validate" type="password" [formControlName]="passwordProperty" autocomplete="new-password"
+                       [name]="passwordProperty">
+                <div class="invalid-feedback" *ngIf="password?.errors">
+                    Password must be {{password.errors.minlength.requiredLength}} characters or more.
+                </div>
+            </div>
+            <button class="btn btn-success" type="submit" [disabled]="!createRoomForm.valid || submitting">Create</button>
+            <span class="ms-3">
+                <fa-icon *ngIf="submitting" [icon]="loadingIcon" [spin]="true" [fixedWidth]="true"></fa-icon>
+                <span class="text-danger" *ngIf="createError">{{ createError }}</span>
+            </span>
+        </form>
+    </div>
+
+</div>

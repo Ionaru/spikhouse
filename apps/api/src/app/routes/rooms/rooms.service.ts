@@ -1,13 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Room, RoomDocument } from '@spikhouse/api-interfaces';
 import { compare, hash } from 'bcrypt';
 import { Model, Types } from 'mongoose';
 
+import { UsersService } from '../users/users.service';
+
 @Injectable()
 export class RoomsService {
     public constructor(
         @InjectModel(Room.name) private readonly roomModel: Model<RoomDocument>,
+        private readonly usersService: UsersService,
     ) {}
 
     public async getRooms(): Promise<RoomDocument[]> {
@@ -39,6 +42,11 @@ export class RoomsService {
 
     public async createRoom(name: string, owner: string, password?: string): Promise<RoomDocument> {
         if (password) {
+
+            if (await this.usersService.checkUserPassword(owner, password)) {
+                throw new ConflictException('password');
+            }
+
             password = await hash(password, 10);
         }
 

@@ -22,6 +22,7 @@ import Socket = SocketIOClient.Socket;
 export class RoomComponent implements OnInit, OnDestroy {
 
     public roomId!: string;
+    public roomName?: string;
     public socket!: Socket;
 
     public connected = false;
@@ -69,6 +70,7 @@ export class RoomComponent implements OnInit, OnDestroy {
             )
             .subscribe((room) => {
                 this.roomId = roomId;
+                this.roomName = room.name;
                 this.needsPassword = room.hasPassword;
                 if (!this.needsPassword) {
                     this.connectSocket();
@@ -80,7 +82,6 @@ export class RoomComponent implements OnInit, OnDestroy {
         this.submitting = true;
         this.passwordError = '';
         this.roomsService.testRoomPassword(this.roomId, this.password?.value).pipe(
-        // this.userService.login(this.email?.value, this.password?.value).pipe(
             catchError((error: HttpErrorResponse) => this.handleError(error)),
             finalize(() => this.submitting = false),
         ).subscribe((correct) => {

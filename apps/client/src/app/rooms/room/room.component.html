@@ -1,7 +1,7 @@
 <div class="container mt-3" *ngIf="roomId">
 
     <div *ngIf="!connected">
-        <h2>Connecting to Room {{roomId}}...</h2>
+        <h2>Connecting to {{roomName}} ...</h2>
 
         <form *ngIf="needsPassword" [formGroup]="roomPasswordForm" (ngSubmit)="checkPassword()" class="col-lg-6">
             <div class="mb-3">
