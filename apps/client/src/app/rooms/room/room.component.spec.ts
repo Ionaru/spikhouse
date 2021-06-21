@@ -6,6 +6,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { RoomsService } from '../rooms.service';
 
 import { RoomComponent } from './room.component';
+import { WebrtcService } from './webrtc.service';
 
 describe('RoomComponent', () => {
     let component: RoomComponent;
@@ -15,9 +16,11 @@ describe('RoomComponent', () => {
         await TestBed.configureTestingModule({
             declarations: [RoomComponent],
             imports: [FormsModule, HttpClientTestingModule, RouterTestingModule],
-            providers: [RoomsService],
+            providers: [RoomsService, WebrtcService],
         }).compileComponents();
 
+        (global as any).RTCPeerConnection = jest.fn();
+        (global as any).MediaStream = jest.fn();
         fixture = TestBed.createComponent(RoomComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
