@@ -13,6 +13,7 @@ export interface IUser {
     updatedAt: Date | string;
 }
 
+export type RTCSdpType = 'answer' | 'offer' | 'pranswer' | 'rollback';
 export class CreateUserDto {
     @IsString()
     @MinLength(3)
@@ -72,4 +73,40 @@ export interface IAPIEnvironment {
     production: boolean;
     sessionName: string;
     sessionSecret: string;
+}
+
+export interface IIsCallActiveMessage {
+    room: string;
+    sender: Partial<IUser>;
+}
+export interface IInitCallMessage {
+    room: string;
+    sender: Partial<IUser>;
+}
+
+export interface ISessionDescriptionMessage {
+    rid: string;
+    sdp: string;
+    room: string;
+    type: RTCSdpType;
+    sender: Partial<IUser>;
+}
+export interface IIceCandidateMessage {
+    candidate?: string;
+    sdpMLineIndex?: number | null;
+    sdpMid?: string | null;
+    usernameFragment?: string | null;
+    room: string;
+    sender: Partial<IUser>;
+}
+
+export interface IRequestOfferMessage {
+    rid: string;
+    room: string;
+    sender: Partial<IUser>;
+}
+
+export interface IDisconnectMessage {
+    room: string;
+    sender: Partial<IUser>;
 }

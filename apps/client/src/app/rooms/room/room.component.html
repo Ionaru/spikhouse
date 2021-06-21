@@ -1,4 +1,4 @@
-<div class="container mt-3" *ngIf="roomId">
+<div *ngIf="roomId" class="container mt-3">
 
     <div *ngIf="!connected">
         <h2>Connecting to Room {{roomId}}...</h2>
@@ -20,24 +20,38 @@
         </form>
     </div>
 
-    <div *ngIf="connected">
-        <p *ngFor="let message of messages">
-            <small class="text-dark">{{message.time | date: 'short'}}</small>
-            <strong class="ms-1" [class]="user._id === message.sender._id ? 'text-success' : 'text-primary'">
-                {{message.sender.displayName}}
-            </strong>
-            <span class="ms-1">{{message.content}}</span>
-        </p>
-
-        <form [noValidate]="true">
-            <div class="input-group mb-3 mt-2">
-                <input type="text" class="form-control" placeholder="message" [(ngModel)]="message"
-                       [formNoValidate]="true" (keyup.enter)="sendMessage(message)" name="message">
-                <div class="input-group-append">
-                    <button class="btn btn-outline-primary" type="button" (click)="sendMessage(message)">Send</button>
-                </div>
+    <div *ngIf="connected" class="d-block d-md-flex flex-md-grow-1 ">
+        <div class="flex-grow-1 py-8">
+            <video #videoElement autoplay playsinline class="ratio ratio-16x9" style="background-color: #eee; max-height: 80vh;"></video>
+            <div *ngIf="isOwner" class="d-flex justify-content-end">
+                <button *ngIf="!isPlaying" (click)="broadcast()" type="button" class="btn btn-success">Connect</button>
+                <button *ngIf="isPlaying" (click)="disconnect()" type="button" class="btn btn-danger">Disconnect</button>
             </div>
-        </form>
+            <div *ngIf="!isOwner" class="d-flex justify-content-end">
+                <button *ngIf="!isPlaying" (click)="watch()" type="button" class="btn btn-success">Start Watching</button> 
+            </div>
+        </div>
+        <div class="d-flex flex-column mt-4 mt-md-0 ms-md-4">
+            <div class="flex-grow-1">
+                <p *ngFor="let message of messages">
+                    <small class="text-dark">{{message.time | date: 'short'}}</small>
+                    <strong class="ms-1" [class]="user._id === message.sender._id ? 'text-success' : 'text-primary'">
+                        {{message.sender.displayName}}
+                    </strong>
+                    <span class="ms-1">{{message.content}}</span>
+                </p>
+            </div>
+    
+            <form [noValidate]="true">
+                <div class="input-group mt-2">
+                    <input type="text" class="form-control me-3" placeholder="message" [(ngModel)]="message"
+                            [formNoValidate]="true" (keyup.enter)="sendMessage(message)" name="message">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-primary" type="button" (click)="sendMessage(message)">Send</button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 
 </div>
