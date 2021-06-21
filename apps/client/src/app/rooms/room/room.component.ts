@@ -27,6 +27,7 @@ import { catchError, finalize } from 'rxjs/operators';
 import * as io from 'socket.io-client';
 
 import { UserService } from '../../auth/user.service';
+import { NavbarComponent } from '../../navbar/navbar.component';
 import { RoomsService } from '../rooms.service';
 
 import { WebrtcService } from './webrtc.service';
@@ -232,6 +233,14 @@ export class RoomComponent implements OnInit, OnDestroy, AfterViewInit {
             sdp: offer.sdp,
             sender: UserService.user,
             type: offer.type,
+        });
+
+        NavbarComponent.toggleAudioEvent.subscribe((enabled) => {
+            this.videoStream?.getAudioTracks().forEach((track) => track.enabled = enabled);
+        });
+
+        NavbarComponent.toggleVideoEvent.subscribe((enabled) => {
+            this.videoStream?.getVideoTracks().forEach((track) => track.enabled = enabled);
         });
     }
 

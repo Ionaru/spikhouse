@@ -23,12 +23,12 @@
         </div>
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link pointer" (click)="webcamEnabled = !webcamEnabled">
+                <a class="nav-link pointer" (click)="toggleVideo()">
                     <fa-icon [icon]="webcamEnabled ? webcamIcon : webcamDisabledIcon" [fixedWidth]="true"></fa-icon>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link pointer" (click)="microphoneEnabled = !microphoneEnabled">
+                <a class="nav-link pointer" (click)="toggleAudio()">
                     <fa-icon [icon]="microphoneEnabled ? microphoneIcon : microphoneDisabledIcon" [fixedWidth]="true">
                     </fa-icon>
                 </a>

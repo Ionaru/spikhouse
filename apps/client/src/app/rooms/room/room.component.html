@@ -24,13 +24,13 @@
         </form>
     </div>
 
-    <div *ngIf="connected" class="d-block d-md-flex flex-md-grow-1 ">
+    <div *ngIf="connected" class="d-block d-md-flex flex-md-grow-1">
 
         <div class="flex-grow-1 py-8">
-            <video #videoElement autoplay playsinline class="ratio ratio-16x9" style="background-color: #eee; max-height: 80vh;"></video>
+            <video #videoElement autoplay playsinline class="ratio ratio-16x9" [muted]="true"></video>
             <div *ngIf="isOwner" class="d-flex justify-content-end">
-                <button *ngIf="!isPlaying" (click)="broadcast()" type="button" class="btn btn-success">Connect</button>
-                <button *ngIf="isPlaying" (click)="disconnect()" type="button" class="btn btn-danger">Disconnect</button>
+                <button *ngIf="!isPlaying" (click)="broadcast()" type="button" class="btn btn-success">Broadcast</button>
+                <button *ngIf="isPlaying" (click)="disconnect()" type="button" class="btn btn-danger">Stop broadcasting</button>
             </div>
             <div *ngIf="!isOwner" class="d-flex justify-content-end">
                 <button *ngIf="!isPlaying" (click)="watch()" type="button" class="btn btn-success">Start Watching</button>
