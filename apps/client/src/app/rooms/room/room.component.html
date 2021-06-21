@@ -16,7 +16,9 @@
                     Please enter a password.
                 </div>
             </div>
-            <button class="btn btn-success" type="submit" [disabled]="!roomPasswordForm.valid || submitting">Enter</button>
+            <button class="btn btn-success" type="submit" [disabled]="!roomPasswordForm.valid || submitting">
+                Enter
+            </button>
             <span class="ms-3">
                 <fa-icon *ngIf="submitting" [icon]="loadingIcon" [spin]="true" [fixedWidth]="true"></fa-icon>
                 <span class="text-danger" *ngIf="passwordError">{{ passwordError }}</span>
@@ -29,11 +31,18 @@
         <div class="flex-grow-1 py-8">
             <video #videoElement autoplay playsinline class="ratio ratio-16x9" [muted]="true"></video>
             <div *ngIf="isOwner" class="d-flex justify-content-end">
-                <button *ngIf="!isPlaying" (click)="broadcast()" type="button" class="btn btn-success">Broadcast</button>
-                <button *ngIf="isPlaying" (click)="disconnect()" type="button" class="btn btn-danger">Stop broadcasting</button>
+                <button *ngIf="!isPlaying" [disabled]="startingBroadcast" (click)="broadcast()" type="button"
+                        class="btn btn-success">
+                    Broadcast
+                </button>
+                <button *ngIf="isPlaying" (click)="disconnect()" type="button" class="btn btn-danger">Stop
+                    broadcasting
+                </button>
             </div>
             <div *ngIf="!isOwner" class="d-flex justify-content-end">
-                <button *ngIf="!isPlaying" (click)="watch()" type="button" class="btn btn-success">Start Watching</button>
+                <button *ngIf="!isPlaying" (click)="watch()" type="button" class="btn btn-success">
+                    Start Watching
+                </button>
             </div>
         </div>
         <div class="d-flex flex-column mt-4 mt-md-0 ms-md-4">
@@ -50,9 +59,11 @@
             <form [noValidate]="true">
                 <div class="input-group mt-2">
                     <input type="text" class="form-control me-3" placeholder="message" [(ngModel)]="message"
-                            [formNoValidate]="true" (keyup.enter)="sendMessage(message)" name="message">
+                           [formNoValidate]="true" (keyup.enter)="sendMessage(message)" name="message">
                     <div class="input-group-append">
-                        <button class="btn btn-outline-primary" type="button" (click)="sendMessage(message)">Send</button>
+                        <button class="btn btn-outline-primary" type="button" (click)="sendMessage(message)">
+                            Send
+                        </button>
                     </div>
                 </div>
             </form>

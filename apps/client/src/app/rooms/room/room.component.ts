@@ -48,6 +48,7 @@ export class RoomComponent implements OnInit, OnDestroy, AfterViewInit {
     public needsPassword = false;
     public passwordError = '';
     public submitting = false;
+    public startingBroadcast = false;
 
     public messages: IMessage[] = [];
     public message = '';
@@ -210,7 +211,7 @@ export class RoomComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     public async broadcast(): Promise<void> {
-        this.isPlaying = true;
+        this.startingBroadcast = true;
         this.videoStream = await navigator.mediaDevices.getUserMedia({
             audio: true,
             video: true,
@@ -242,6 +243,9 @@ export class RoomComponent implements OnInit, OnDestroy, AfterViewInit {
         NavbarComponent.toggleVideoEvent.subscribe((enabled) => {
             this.videoStream?.getVideoTracks().forEach((track) => track.enabled = enabled);
         });
+
+        this.startingBroadcast = false;
+        this.isPlaying = true;
     }
 
     public async disconnect(): Promise<void> {
