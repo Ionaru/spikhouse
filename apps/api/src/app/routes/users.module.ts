@@ -1,14 +1,6 @@
 import { Module, OnModuleInit } from '@nestjs/common';
 import { InjectModel, MongooseModule } from '@nestjs/mongoose';
-import {
-    Chat,
-    ChatSchema,
-    Room,
-    RoomDocument,
-    RoomSchema,
-    User,
-    UserDocument,
-    UserSchema,
+import { Chat, ChatSchema, Room, RoomDocument, RoomSchema, User, UserDocument, UserSchema,
 } from '@spikhouse/api-interfaces';
 import { Model } from 'mongoose';
 
