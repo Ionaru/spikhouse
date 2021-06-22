@@ -1,6 +1,15 @@
 import { Module, OnModuleInit } from '@nestjs/common';
 import { InjectModel, MongooseModule } from '@nestjs/mongoose';
-import { Room, RoomDocument, RoomSchema, User, UserDocument, UserSchema } from '@spikhouse/api-interfaces';
+import {
+    Chat,
+    ChatSchema,
+    Room,
+    RoomDocument,
+    RoomSchema,
+    User,
+    UserDocument,
+    UserSchema,
+} from '@spikhouse/api-interfaces';
 import { Model } from 'mongoose';
 
 import { AuthController } from './auth/auth.controller';
@@ -17,6 +26,7 @@ import { UsersService } from './users/users.service';
         MongooseModule.forFeature([
             {name: User.name, schema: UserSchema},
             {name: Room.name, schema: RoomSchema},
+            {name: Chat.name, schema: ChatSchema},
         ]),
     ],
     providers: [UsersService, RoomsService, RoomGateway],
