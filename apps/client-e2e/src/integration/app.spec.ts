@@ -6,7 +6,7 @@ describe('registration', () => {
 
     it('should display the page', () => {
         cy.visit('/');
-        cy.contains('Welcome to Spikhouse!');
+        cy.contains('Welcome to Spikhouse!').should('be.visible');
     });
 
     it('should display an error', () => {
@@ -14,7 +14,7 @@ describe('registration', () => {
             statusCode: 504,
         });
         cy.visit('/');
-        cy.contains('Http failure response for http://localhost:4200/api/auth: 504 Gateway Timeout');
+        cy.contains('Http failure response for http://localhost:4200/api/auth: 504 Gateway Timeout').should('be.visible');
     });
 
 });

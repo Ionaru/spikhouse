@@ -27,6 +27,7 @@ import { catchError, finalize } from 'rxjs/operators';
 import * as io from 'socket.io-client';
 
 import { UserService } from '../../auth/user.service';
+import { NavbarComponent } from '../../navbar/navbar.component';
 import { RoomsService } from '../rooms.service';
 
 import { WebrtcService } from './webrtc.service';
@@ -40,12 +41,14 @@ import Socket = SocketIOClient.Socket;
 })
 export class RoomComponent implements OnInit, OnDestroy, AfterViewInit {
     public roomId!: string;
+    public roomName?: string;
     public socket!: Socket;
 
     public connected = false;
     public needsPassword = false;
     public passwordError = '';
     public submitting = false;
+    public startingBroadcast = false;
 
     public messages: IMessage[] = [];
     public message = '';
@@ -61,6 +64,7 @@ export class RoomComponent implements OnInit, OnDestroy, AfterViewInit {
             this.videoElement.nativeElement.srcObject = this.videoStream;
         }
     }
+
     public get videoStream(): MediaStream {
         return this._videoStream;
     }
@@ -76,6 +80,7 @@ export class RoomComponent implements OnInit, OnDestroy, AfterViewInit {
             Validators.minLength(3),
         ]),
     });
+
     public get password(): AbstractControl | null {
         return this.roomPasswordForm.get(this.passwordProperty);
     }
@@ -110,6 +115,7 @@ export class RoomComponent implements OnInit, OnDestroy, AfterViewInit {
             )
             .subscribe(async (room) => {
                 this.roomId = roomId;
+                this.roomName = room.name;
                 this.needsPassword = room.hasPassword;
 
                 if (!this.needsPassword) {
@@ -144,22 +150,16 @@ export class RoomComponent implements OnInit, OnDestroy, AfterViewInit {
     public checkPassword(): void {
         this.submitting = true;
         this.passwordError = '';
-        this.roomsService
-            .testRoomPassword(this.roomId, this.password?.value)
-            .pipe(
-                // this.userService.login(this.email?.value, this.password?.value).pipe(
-                catchError((error: HttpErrorResponse) =>
-                    this.handleError(error),
-                ),
-                finalize(() => (this.submitting = false)),
-            )
-            .subscribe((correct) => {
-                if (!correct) {
-                    this.passwordError = 'Password incorrect';
-                } else {
-                    this.connectSocket();
-                }
-            });
+        this.roomsService.testRoomPassword(this.roomId, this.password?.value).pipe(
+            catchError((error: HttpErrorResponse) => this.handleError(error)),
+            finalize(() => this.submitting = false),
+        ).subscribe((correct) => {
+            if (!correct) {
+                this.passwordError = 'Password incorrect';
+            } else {
+                this.connectSocket().then();
+            }
+        });
     }
 
     public handleError(error: HttpErrorResponse): Observable<never> {
@@ -211,7 +211,7 @@ export class RoomComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     public async broadcast(): Promise<void> {
-        this.isPlaying = true;
+        this.startingBroadcast = true;
         this.videoStream = await navigator.mediaDevices.getUserMedia({
             audio: true,
             video: true,
@@ -235,6 +235,17 @@ export class RoomComponent implements OnInit, OnDestroy, AfterViewInit {
             sender: UserService.user,
             type: offer.type,
         });
+
+        NavbarComponent.toggleAudioEvent.subscribe((enabled) => {
+            this.videoStream?.getAudioTracks().forEach((track) => track.enabled = enabled);
+        });
+
+        NavbarComponent.toggleVideoEvent.subscribe((enabled) => {
+            this.videoStream?.getVideoTracks().forEach((track) => track.enabled = enabled);
+        });
+
+        this.startingBroadcast = false;
+        this.isPlaying = true;
     }
 
     public async disconnect(): Promise<void> {
@@ -301,7 +312,7 @@ export class RoomComponent implements OnInit, OnDestroy, AfterViewInit {
         );
 
         this.socket.on(
-            'answerIceCanditateResponse',
+            'answerIceCandidateResponse',
             async (message: IIceCandidateMessage) => {
                 await this.webrtcService.addIceCandidate(message);
             },
@@ -334,7 +345,7 @@ export class RoomComponent implements OnInit, OnDestroy, AfterViewInit {
                 if (this.isPlaying) {
                     const answer = await this.webrtcService.createAnswer(
                         this.videoStream,
-                        { sdp: message.sdp, type: message.type },
+                        {sdp: message.sdp, type: message.type},
                     );
 
                     if (this.videoElement) {
@@ -353,7 +364,7 @@ export class RoomComponent implements OnInit, OnDestroy, AfterViewInit {
         );
 
         this.socket.on(
-            'offerIceCanditateResponse',
+            'offerIceCandidateResponse',
             async (message: IIceCandidateMessage) => {
                 await this.webrtcService.addIceCandidate(message);
             },

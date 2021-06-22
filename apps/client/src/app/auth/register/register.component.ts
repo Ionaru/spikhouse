@@ -64,10 +64,13 @@ export class RegisterComponent {
     }
 
     public handleError(error: HttpErrorResponse): Observable<never> {
+        this.error = 'Unknown error, please try again later.';
         if (error.status === StatusCodes.CONFLICT) {
             this.error = 'Email is already in use.';
+        } else {
+            return throwError(error);
         }
 
-        return throwError(this.error || error);
+        return throwError(this.error);
     }
 }

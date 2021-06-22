@@ -43,6 +43,6 @@ describe('HomeComponent', () => {
         expect(component.loginError).toStrictEqual('');
         const error = new HttpErrorResponse({status: StatusCodes.INTERNAL_SERVER_ERROR});
         component.handleError(error);
-        expect(component.loginError).toStrictEqual('');
+        expect(component.loginError).toStrictEqual('Unknown error, please try again later.');
     });
 });

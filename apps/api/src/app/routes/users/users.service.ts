@@ -17,7 +17,8 @@ export class UsersService {
         return this.userModel.findById(id);
     }
 
-    public async getUserByEmail(email: string): Promise<UserDocument | null> {
+    public async getUserByEmail(emailRaw: string): Promise<UserDocument | null> {
+        const email = emailRaw.toLowerCase();
         return this.userModel.findOne({email});
     }
 
@@ -30,7 +31,8 @@ export class UsersService {
         return compare(password, user.password);
     }
 
-    public async deleteUser(email: string): Promise<void> {
+    public async deleteUser(emailRaw: string): Promise<void> {
+        const email = emailRaw.toLowerCase();
         const user = await this.userModel.findOne({email});
         if (user) {
             await user.remove();
@@ -41,7 +43,8 @@ export class UsersService {
         return this.userModel.find();
     }
 
-    public async createUser(email: string, displayName: string, passwordRaw: string): Promise<UserDocument> {
+    public async createUser(emailRaw: string, displayName: string, passwordRaw: string): Promise<UserDocument> {
+        const email = emailRaw.toLowerCase();
         const password = await hash(passwordRaw, 15);
         const newUser = new this.userModel({email, displayName, password});
         try {
